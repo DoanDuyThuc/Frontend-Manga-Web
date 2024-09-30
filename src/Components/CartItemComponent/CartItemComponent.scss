@@ -1,0 +1,102 @@
+.CartItemComponent {
+    width: 100%;
+
+
+    &__CartItemAvartar {
+        margin: 0 10px;
+        overflow: hidden;
+        border-radius: 6px;
+        position: relative;
+
+        >a {
+            cursor: pointer;
+
+            >img {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                vertical-align: middle;
+                display: inline-block;
+                border: 1px solid #ccc;
+            }
+        }
+
+        &__notice {
+            position: absolute;
+            top: 9px;
+            left: 8px;
+
+            &__time {
+                border-radius: 5px;
+                background-color: #56ccf2;
+                margin-right: 5px;
+                font-size: 13px;
+                font-weight: 400;
+                color: #fff;
+                padding: 2px 6px 3px;
+            }
+
+            &__Hot {
+                background-color: #ff2853;
+                border-radius: 5px;
+                -webkit-animation: pulse 1s steps(5, start) infinite;
+                animation: pulse 1s steps(5, start) infinite;
+                font-size: 13px;
+                font-weight: 500;
+                color: #fff;
+                padding: 2px 6px 3px;
+            }
+        }
+    }
+
+    &__CartItemInfo {
+        margin: 0 10px;
+
+        &__name {
+            text-align: center;
+            line-height: 35px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 7px;
+            height: 35px;
+            max-width: 100%;
+            overflow: hidden;
+            text-transform: capitalize;
+
+            h3 {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                a {
+                    cursor: pointer;
+                    text-decoration: none;
+                    color: inherit;
+                    font-size: 1.17rem;
+                }
+            }
+        }
+
+        &__chapter {
+            font-size: 12px;
+            text-align: center;
+
+            a {
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: capitalize;
+                cursor: pointer;
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+    }
+}
+
+
+@keyframes pulse {
+
+    100% {
+        visibility: hidden;
+    }
+}

@@ -1,21 +1,12 @@
 @import '../../variables.scss';
 
 .HeaderComponent {
+    padding-bottom: 5px;
 
     &__Top {
         height: 64px;
-        background-color: $primary-background;
+        background-color: $primary-backgroundWhite;
         padding: 10px 0;
-
-        @media (max-width: $breakpoint-md) {
-            height: 100%;
-
-        }
-
-        @media (max-width: $breakpoint-sm) {
-            height: 100%;
-
-        }
 
         @media (max-width: $breakpoint-lg) {
             height: 100%;
@@ -23,23 +14,16 @@
         }
 
         &__middle {
-            width: 1300px;
+            width: 1200px;
+            padding: 0 20px;
             margin: 0 auto;
             height: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
 
-            @media (max-width: $breakpoint-md) {
-                align-items: unset;
+            @media (max-width: $breakpoint-xl) {
                 width: 100%;
-
-            }
-
-            @media (max-width: $breakpoint-sm) {
-                align-items: unset;
-                width: 100%;
-
             }
 
             @media (max-width: $breakpoint-lg) {
@@ -51,15 +35,6 @@
             &__Left {
                 display: flex;
 
-                @media (max-width: $breakpoint-md) {
-                    display: unset;
-                    width: 100%;
-                }
-
-                @media (max-width: $breakpoint-sm) {
-                    display: unset;
-                    width: 100%;
-                }
 
                 @media (max-width: $breakpoint-lg) {
                     display: unset;
@@ -88,15 +63,6 @@
                     position: relative;
                     margin-left: 20px;
 
-                    @media (max-width: $breakpoint-md) {
-                        display: unset;
-                        margin: 0;
-                    }
-
-                    @media (max-width: $breakpoint-sm) {
-                        display: unset;
-                        margin: 0;
-                    }
 
                     @media (max-width: $breakpoint-lg) {
                         display: unset;
@@ -117,13 +83,6 @@
                         height: 44px;
                         outline: none;
 
-                        @media (max-width: $breakpoint-md) {
-                            margin-top: 12px;
-                        }
-
-                        @media (max-width: $breakpoint-sm) {
-                            margin-top: 12px;
-                        }
 
                         @media (max-width: $breakpoint-lg) {
                             margin-top: 12px;
@@ -149,18 +108,6 @@
                 display: flex;
                 gap: 16px;
                 align-items: center;
-
-                @media (max-width: $breakpoint-md) {
-                    align-items: start;
-                    display: none;
-
-                }
-
-                @media (max-width: $breakpoint-sm) {
-                    align-items: start;
-                    display: none;
-
-                }
 
                 @media (max-width: $breakpoint-lg) {
                     align-items: start;
@@ -188,47 +135,31 @@
             height: 56px;
 
             &__container {
+
                 align-items: center;
                 display: flex;
                 flex-wrap: inherit;
                 justify-content: space-between;
-                width: 100%;
-                padding: 0 30px;
-                position: relative;
+                width: 1200px;
+                padding: 0 20px;
+                margin: 0 auto;
+                // position: relative;
                 background-color: $primary-color;
 
                 &__Logo {
-                    color: $primary-white;
+                    color: $primary-text;
                     text-decoration: none;
                 }
 
                 &__List {
                     display: flex;
                     align-items: center;
+
                     margin: 0;
                     gap: 20px;
                     height: 100%;
 
-                    @media (max-width: $breakpoint-md) {
-
-                        flex-direction: column;
-                        margin: 9px 0 0 0;
-                        padding: 0 16px 0 16px;
-                        align-items: start;
-                        background-color: $primary-color;
-                    }
-
-                    @media (max-width: $breakpoint-sm) {
-
-                        flex-direction: column;
-                        margin: 9px 0 0 0;
-                        padding: 0 16px 0 16px;
-                        align-items: start;
-                        background-color: $primary-color;
-                    }
-
-                    @media (max-width: $breakpoint-lg) {
-
+                    @media screen and (max-width: $breakpoint-lg) {
                         flex-direction: column;
                         margin: 9px 0 0 0;
                         padding: 0 16px 0 16px;
@@ -238,48 +169,60 @@
 
                     &__Item {
 
-                        color: $primary-white;
+                        color: $primary-text;
                         display: flex;
                         align-items: center;
-                        padding: 16px 10px;
 
-                        @media (max-width: $breakpoint-md) {
 
-                            width: 100%;
-                            cursor: pointer;
+                        //lap top
+                        @media (min-width: $breakpoint-lg) {
+                            flex-direction: row;
 
                             &:hover {
-                                opacity: 0.8;
-                                background-color: #ccc;
+                                background-color: #f29c57;
+                                transition: .3s;
+                                color: #ffffff;
+                            }
+
+                            &:hover &__Bottom {
+                                display: grid;
+                                width: 100%;
+                                position: absolute;
+                                background-color: #fff;
+                                left: 0;
+                                color: #333;
+                                z-index: 2;
+                                top: 56px;
                             }
                         }
 
-                        @media (max-width: $breakpoint-sm) {
 
-                            width: 100%;
-                            cursor: pointer;
-
-                            &:hover {
-                                opacity: 0.8;
-                                background-color: #ccc;
-                            }
+                        &__Bottom {
+                            display: none;
                         }
 
+
+                        // điện thoại
                         @media (max-width: $breakpoint-lg) {
 
                             width: 100%;
                             cursor: pointer;
+                            flex-direction: column;
 
-                            &:hover {
-                                opacity: 0.8;
-                                background-color: #ccc;
+                            &__Bottom {
+                                background-color: #fff;
+                                color: #333;
                             }
+
                         }
 
-                        a {
+                        &__Top {
                             text-decoration: none;
                             color: #fff;
                             font-size: 15px;
+                            width: 100%;
+                            line-height: 56px;
+                            padding: 0 10px;
                         }
                     }
                 }
@@ -293,7 +236,7 @@
 
 .Button__User {
     background-color: $primary-color;
-    color: $primary-white;
+    color: $primary-text;
     border: none;
     padding: 10px 20px;
     border-radius: 50px;
@@ -304,14 +247,6 @@
     align-items: center;
     gap: 10px;
     transition: all 0.3s;
-
-    @media (max-width: $breakpoint-md) {
-        display: flex;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-        display: flex;
-    }
 
     @media (max-width: $breakpoint-lg) {
         display: flex;

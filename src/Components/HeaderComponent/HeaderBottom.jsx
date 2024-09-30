@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -6,8 +6,38 @@ import { FaCaretDown } from "react-icons/fa";
 import { NavLink } from 'react-router-dom';
 import './HeaderComponent.scss'
 import { Button } from 'react-bootstrap';
+import { HeaderItemContent } from './HeaderItemContent';
 
 export const HeaderBottom = () => {
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [text, setText] = useState('');
+
+    const toggleContent = (newText) => {
+        setIsOpen((prev) => !prev);
+
+        setText(() => (isOpen ? '' : newText));
+    };
+
+
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 992) {
+                setIsOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        };
+        ;
+    }, []);
 
     return (
         <div className='HeaderComponent__Bottom'>
@@ -18,40 +48,46 @@ export const HeaderBottom = () => {
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
                             <ul className='HeaderComponent__Bottom__nav__container__List'>
-                                <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <div>
-                                        <NavLink to="/the-loai">Thể Loại</NavLink>
+                                <li onClick={() => toggleContent('TheLoai')} className='HeaderComponent__Bottom__nav__container__List__Item'>
+                                    <span className='HeaderComponent__Bottom__nav__container__List__Item__Top'>
+                                        <span>Thể Loại</span>
                                         <FaCaretDown />
-                                    </div>
-                                    <div>
-                                        <div>
-                                            adasdasd
-                                        </div>
+                                    </span>
+                                    <div className={
+                                        'HeaderComponent__Bottom__nav__container__List__Item__Bottom'
+                                    }
+                                        style={{ display: text === 'TheLoai' && window.innerWidth < 992 ? "grid" : "" }}
+                                    >
+                                        <HeaderItemContent />
                                     </div>
                                 </li>
-                                <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <div>
-                                        <NavLink to="/the-loai">Thể Loại</NavLink>
+                                <li onClick={() => toggleContent('XepHang')} className='HeaderComponent__Bottom__nav__container__List__Item'>
+                                    <span className='HeaderComponent__Bottom__nav__container__List__Item__Top'>
+                                        <span>Xếp Hạng</span>
                                         <FaCaretDown />
+                                    </span>
+                                    <div className={
+                                        'HeaderComponent__Bottom__nav__container__List__Item__Bottom'
+                                    }
+                                        style={{ display: text === 'XepHang' && window.innerWidth < 992 ? "grid" : "" }}
+                                    >
+                                        <HeaderItemContent />
                                     </div>
-                                    <div>
-                                        sadasd
-                                    </div>
                                 </li>
                                 <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <NavLink to="/the-loai">Tìm Truyện</NavLink>
+                                    <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Tìm Truyện</NavLink>
                                 </li>
                                 <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <NavLink to="/the-loai">Lịch Sử</NavLink>
+                                    <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Lịch Sử</NavLink>
                                 </li>
                                 <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <NavLink to="/the-loai">Theo Dõi</NavLink>
+                                    <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Theo Dõi</NavLink>
                                 </li>
                                 <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <NavLink to="/the-loai">Thảo Luận</NavLink>
+                                    <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Thảo Luận</NavLink>
                                 </li>
                                 <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                    <a to="/" href='' >Fanpage</a>
+                                    <a className='HeaderComponent__Bottom__nav__container__List__Item__Top' href='/' >Fanpage</a>
                                 </li>
                                 <li className='Button__User'>
                                     <Button variant="primary" size="sm" >Đăng Ký</Button>

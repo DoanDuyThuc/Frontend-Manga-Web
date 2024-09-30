@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 html,
 body,
 div,
@@ -109,10 +111,43 @@ section {
   font-family: sans-serif;
 }
 
-body {
-  font-family: Quicksand, sans-serif;
-  font-size: 14px;
+@font-face {
+  font-family: "Quicksand";
+  src: url('../public/fonts/Quicksand-Bold.ttf') format('truetype');
   font-weight: 400;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url('../public/fonts/Quicksand-Light.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url('../public/fonts/Quicksand-Medium.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url('../public/fonts/Quicksand-Regular.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url('../public/fonts/Quicksand-SemiBold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+body {
+  font-family: "Quicksand", sans-serif !important;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: 14px !important;
+  font-weight: 500;
+  background-color: $primary-background !important;
 }
 
 ol,

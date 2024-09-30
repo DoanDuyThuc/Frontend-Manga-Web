@@ -1,10 +1,11 @@
 import React from 'react'
 import './HomePage.scss'
+import SliderHomeComponent from '../../Components/SliderHomeComponent/SliderHomeComponent'
 
 export const HomePage = () => {
     return (
-        <div>
-            HomePage
+        <div className='HomePage'>
+            <SliderHomeComponent />
         </div>
     )
 }
