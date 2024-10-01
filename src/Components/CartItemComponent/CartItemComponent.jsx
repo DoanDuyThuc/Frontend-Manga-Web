@@ -2,10 +2,10 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import './CartItemComponent.scss'
 
-export const CartItemComponent = () => {
+export const CartItemComponent = ({ marginZero }) => {
     return (
         <div className='CartItemComponent'>
-            <div className='CartItemComponent__CartItemAvartar'>
+            <div style={{ margin: marginZero ? 0 : '0 10px' }} className='CartItemComponent__CartItemAvartar'>
                 <NavLink to='/a'>
                     <img src='https://ddntcthcd.com/nettruyen/thumb/ta-la-nhan-vat-phan-dien-dai-thieu-gia.jpg' alt='Win Over The Dragon Emperor This Time Around, Noble Girl!' />
                 </NavLink>

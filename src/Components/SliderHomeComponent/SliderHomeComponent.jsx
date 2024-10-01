@@ -4,6 +4,7 @@ import Slider from 'react-slick';
 import './SliderHomeComponent.scss';
 import { FaAngleRight } from "react-icons/fa";
 import { CartItemComponent } from '../CartItemComponent/CartItemComponent';
+import { Container } from 'react-bootstrap';
 
 
 const SliderHomeComponent = () => {
@@ -79,7 +80,7 @@ const SliderHomeComponent = () => {
     };
 
     return (
-        <div className='SliderHomeComponent'>
+        <Container fluid className='SliderHomeComponent'>
 
             <h2 className='SliderHomeComponent__Title'>
                 <div>
@@ -99,7 +100,7 @@ const SliderHomeComponent = () => {
                 <CartItemComponent />
 
             </Slider>
-        </div>
+        </Container>
     );
 }
 

@@ -8,6 +8,12 @@
         background-color: $primary-backgroundWhite;
         padding: 10px 0;
 
+        &.dark-mode {
+            background-color: $dark-primary-background !important;
+            color: $primary-text !important;
+
+        }
+
         @media (max-width: $breakpoint-lg) {
             height: 100%;
 
@@ -41,22 +47,6 @@
                     width: 100%;
                 }
 
-                &__darkMode {
-                    color: $primary-color;
-                    border: 1px solid;
-                    height: 60px;
-                    border-radius: 150px;
-                    width: 60px;
-                    text-align: center;
-                    font-size: 17px;
-                    background-color: transparent;
-                    margin-left: 20px;
-                    position: fixed;
-                    bottom: 20px;
-                    left: 0;
-                    cursor: pointer;
-                    z-index: 1000;
-                }
 
                 &__Search {
                     width: 400px;
@@ -131,6 +121,12 @@
 
         background-color: $primary-color;
 
+        &.dark-mode {
+            background-color: #242526 !important;
+            color: $primary-text !important;
+
+        }
+
         &__nav {
             height: 56px;
 
@@ -141,14 +137,16 @@
                 flex-wrap: inherit;
                 justify-content: space-between;
                 width: 1200px;
-                padding: 0 20px;
+
                 margin: 0 auto;
                 // position: relative;
-                background-color: $primary-color;
+                z-index: 10;
+
 
                 &__Logo {
-                    color: $primary-text;
+                    // color: $primary-text;
                     text-decoration: none;
+                    color: $primary-text;
                 }
 
                 &__List {
@@ -169,7 +167,7 @@
 
                     &__Item {
 
-                        color: $primary-text;
+                        // color: $primary-text;
                         display: flex;
                         align-items: center;
 
@@ -236,7 +234,7 @@
 
 .Button__User {
     background-color: $primary-color;
-    color: $primary-text;
+    // color: $primary-text;
     border: none;
     padding: 10px 20px;
     border-radius: 50px;
@@ -251,4 +249,41 @@
     @media (max-width: $breakpoint-lg) {
         display: flex;
     }
+}
+
+
+// chế độ sáng tối
+.darkMode {
+    color: $primary-color;
+    border: 1px solid;
+    height: 60px;
+    border-radius: 150px;
+    width: 60px;
+    text-align: center;
+    font-size: 17px;
+    background-color: transparent;
+    margin-left: 20px;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.backToTop {
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid #ddd;
+    color: #f18121;
+    border-radius: 3px;
+    float: left;
+    position: fixed;
+    right: 10px;
+    bottom: 50px;
+    z-index: 900;
+    line-height: 38px;
+    font-size: 20px;
 }

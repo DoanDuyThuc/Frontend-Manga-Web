@@ -2,12 +2,18 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { HomePage } from '../Pages/HomePage/HomePage'
 import { DefaultComponent } from '../Components/DefaultComponent/DefaultComponent'
+import { ListMangaPage } from '../Pages/ListMangaPage/ListMangaPage'
 
 const guestsRouter =
     [
         {
             path: '/',
             page: HomePage,
+            isHeaderFooter: true,
+        },
+        {
+            path: '/truyen-moi-cap-nhat/:id',
+            page: ListMangaPage,
             isHeaderFooter: true,
         },
     ]
