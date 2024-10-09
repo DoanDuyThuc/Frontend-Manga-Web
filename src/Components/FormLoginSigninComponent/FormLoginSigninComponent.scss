@@ -1,0 +1,75 @@
+@import '../../variables.scss';
+
+.LoginFormComponent {
+    padding: 20px;
+
+    >h2 {
+        font-size: 20px;
+        text-align: center;
+        margin: 10px 0 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    &__Form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        &__navigate {
+            >p {
+                margin: 0;
+
+                >span {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-weight: 600;
+                    padding: 0;
+                    font-size: 16px;
+
+                    &:hover {
+                        color: $primary-color;
+                    }
+                }
+            }
+        }
+
+        &__submit {
+            text-align: end;
+
+            >button {
+                padding: 0 10px;
+                border: none;
+                border-radius: 5px;
+                line-height: 35px;
+                color: #fff;
+                font-size: 13px;
+                min-width: 50px;
+                cursor: pointer;
+                margin-left: 5px;
+                background-color: #3f94d5;
+                font-weight: 600;
+            }
+        }
+
+        &__social {
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 10px;
+
+            >a {
+                margin: 0 5px;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+            }
+        }
+    }
+}

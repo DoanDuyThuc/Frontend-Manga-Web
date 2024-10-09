@@ -105,11 +105,6 @@
 
                 }
 
-                &__UserName {}
-
-                &__Manager {
-                    cursor: pointer;
-                }
             }
 
 
@@ -147,15 +142,17 @@
                     // color: $primary-text;
                     text-decoration: none;
                     color: $primary-text;
+                    margin-left: 20px;
+                    font-weight: 600;
                 }
 
                 &__List {
                     display: flex;
                     align-items: center;
-
                     margin: 0;
                     gap: 20px;
                     height: 100%;
+
 
                     @media screen and (max-width: $breakpoint-lg) {
                         flex-direction: column;
@@ -163,6 +160,10 @@
                         padding: 0 16px 0 16px;
                         align-items: start;
                         background-color: $primary-color;
+                    }
+
+                    &.dark-mode {
+                        background-color: #242526;
                     }
 
                     &__Item {
@@ -233,7 +234,6 @@
 
 
 .Button__User {
-    background-color: $primary-color;
     // color: $primary-text;
     border: none;
     padding: 10px 20px;

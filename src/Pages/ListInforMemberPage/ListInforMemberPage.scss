@@ -1,0 +1,153 @@
+@import '../../variables.scss';
+
+.ListInforMemberPage {
+    width: 1200px;
+    margin: 0px auto;
+    padding-bottom: 40px;
+
+    @media (max-width: $breakpoint-xl) {
+        width: 100%;
+    }
+
+    @media (max-width: $breakpoint-lg) {
+        width: 100%;
+
+    }
+
+    &__tags {
+        color: #56ccf2;
+        line-height: 60px;
+        position: relative;
+        width: 100%;
+        margin-top: 10px;
+        min-height: 60px;
+
+        >h1 {
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 60px;
+            margin: 0;
+
+            >p {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    }
+
+    &__main {
+        background: #fff;
+        overflow: hidden;
+        padding: 20px;
+        margin: 15px 20px 0 20px;
+
+        &__navUser {
+            background: #f2f2f2;
+            padding: 10px 25px;
+            display: block;
+
+            &__item {
+                list-style: none;
+
+                >a {
+                    text-decoration: none;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 16px;
+                    color: #000;
+                    font-weight: bold;
+                    padding: 11px 0 11px 11px;
+
+
+                }
+            }
+        }
+
+        &__content {
+            padding: 10px 25px;
+            display: block;
+
+            &__form {
+
+                &__itemPass {
+                    margin: 10px 0;
+                }
+
+                >p {
+                    margin: 0;
+                    padding-top: 10px;
+                    font-size: 20px;
+                    color: #424242;
+                    font-weight: bold;
+                    padding-bottom: 5px;
+                }
+
+                &__item {
+
+                    &__note {
+                        text-align: center;
+                        padding: 10px 25px;
+                    }
+                }
+
+                &__levelUser {
+                    &__skill {
+                        width: 75%;
+                        margin: 0 auto;
+                        padding-bottom: 10px;
+                        position: relative;
+
+                        &__levelCurrent {
+                            font-weight: bold;
+                        }
+
+                        &__levelNext {
+                            right: 0;
+                            position: absolute;
+                            font-weight: bold;
+                        }
+
+                        &__progress {
+                            >div {
+                                background: linear-gradient(90deg, #ffd33d, #ea4aaa 17%, #b34bff 34%, #01feff 51%, #ffd33d 68%, #ea4aaa 85%, #b34bff);
+                                animation: progress-animation 2s linear infinite;
+                                background-size: 300% 100%;
+
+                            }
+                        }
+
+                    }
+                }
+
+                &__inforUser {
+                    >p {
+                        margin: 0;
+                        padding-top: 10px;
+                        font-size: 20px;
+                        color: #424242;
+                        font-weight: bold;
+                        padding-bottom: 5px;
+                    }
+                }
+
+                &__btnsubmit {
+                    text-align: center;
+                }
+
+            }
+        }
+    }
+}
+
+@keyframes progress-animation {
+    0% {
+        background-position: 100%;
+    }
+
+    100% {
+        background-position: 0;
+    }
+}

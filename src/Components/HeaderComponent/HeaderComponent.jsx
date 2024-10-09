@@ -8,11 +8,10 @@ import { FaChevronUp, FaRegLightbulb } from "react-icons/fa";
 export const HeaderComponent = () => {
 
     const [isVisible, setIsVisible] = useState(true);
+    const path = window.location.pathname;
 
     const handleClickTop = () => {
         const headerElement = document.querySelector('.HeaderComponent__Top');
-
-        console.log(headerElement);
 
         if (headerElement) {
             headerElement.scrollIntoView({ behavior: 'smooth' });
@@ -51,22 +50,27 @@ export const HeaderComponent = () => {
     useEffect(() => {
         // Thay đổi lớp cho body khi chế độ tối được kích hoạt
         document.body.classList.toggle('dark-mode', isDarkMode);
-        document.querySelector('.HeaderComponent__Bottom').classList.toggle('dark-mode', isDarkMode);
-        document.querySelector('.HeaderComponent__Top').classList.toggle('dark-mode', isDarkMode);
-        document.querySelector('.HeaderComponent__Bottom__nav__container').classList.toggle('dark-mode', isDarkMode);
-        document.querySelector('.FooterComponent').classList.toggle('dark-mode', isDarkMode);
+        document.querySelector('.HeaderComponent__Bottom')?.classList?.toggle('dark-mode', isDarkMode);
+        document.querySelector('.HeaderComponent__Top')?.classList?.toggle('dark-mode', isDarkMode);
+        document.querySelector('.HeaderComponent__Bottom__nav__container')?.classList?.toggle('dark-mode', isDarkMode);
+        document.querySelector('.FooterComponent')?.classList?.toggle('dark-mode', isDarkMode);
+        document.querySelector('.DetailMangaPage')?.classList?.toggle('dark-mode', isDarkMode);
+        document.querySelector('.HeaderComponent__Bottom__nav__container__List')?.classList?.toggle('dark-mode', isDarkMode);
+
 
         localStorage.setItem('darkMode', isDarkMode);
 
         return () => {
-            document.body.classList.remove('dark-mode');
-            document.querySelector('.HeaderComponent__Bottom')?.classList.remove('dark-mode');
-            document.querySelector('.HeaderComponent__Top')?.classList.remove('dark-mode');
-            document.querySelector('.HeaderComponent__Bottom__nav__container')?.classList.remove('dark-mode');
-            document.querySelector('.FooterComponent')?.classList.remove('dark-mode');
+            document.body.classList?.remove('dark-mode');
+            document.querySelector('.HeaderComponent__Bottom')?.classList?.remove('dark-mode');
+            document.querySelector('.HeaderComponent__Top')?.classList?.remove('dark-mode');
+            document.querySelector('.HeaderComponent__Bottom__nav__container')?.classList?.remove('dark-mode');
+            document.querySelector('.FooterComponent')?.classList?.remove('dark-mode');
+            document.querySelector('.DetailMangaPage')?.classList?.remove('dark-mode');
+            document.querySelector('.HeaderComponent__Bottom__nav__container__List')?.classList?.remove('dark-mode');
         };
 
-    }, [isDarkMode]);
+    }, [isDarkMode, path]);
 
     const toggleDarkMode = () => {
         setIsDarkMode(!isDarkMode);
@@ -75,7 +79,7 @@ export const HeaderComponent = () => {
     return (
         <div className='HeaderComponent'>
             <HeaderTop />
-            <HeaderBottom />
+            <HeaderBottom isDarkMode={isDarkMode} />
             {isVisible &&
                 <button onClick={toggleDarkMode} className='darkMode'>
                     <FaRegLightbulb />

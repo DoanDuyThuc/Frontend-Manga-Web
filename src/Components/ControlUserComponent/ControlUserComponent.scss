@@ -1,0 +1,40 @@
+@import '../../variables.scss';
+
+.ControlUserComponent {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    &__UserName {}
+
+    &__Manager {
+        cursor: pointer;
+    }
+}
+
+.popover-user {
+    &__list {
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 250px;
+
+        &__item {
+
+            >a {
+                display: block;
+                width: 100%;
+                text-decoration: none;
+                color: #333;
+
+            }
+
+            :hover {
+                color: $primary-color !important;
+            }
+
+        }
+    }
+}
