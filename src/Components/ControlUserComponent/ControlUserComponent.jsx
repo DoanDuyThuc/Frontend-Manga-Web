@@ -5,6 +5,11 @@ import User from '../../public/images/user.png'
 
 import './ControlUserComponent.scss'
 import { NavLink } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useMutation } from '@tanstack/react-query'
+import { LogoutService } from '../../services/UserService'
+import { toast } from 'react-toastify'
+import { clearUser } from '../../redux/user/userSlice'
 
 
 export const ControlUserComponent = () => {
@@ -12,6 +17,53 @@ export const ControlUserComponent = () => {
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
     const ref = useRef(null);
+
+    const dispatch = useDispatch();
+    const user = useSelector(state => state?.user);
+
+    // mutations
+    const mutation = useMutation({
+        mutationFn: LogoutService,
+        onSuccess: (data) => {
+            if (!data.error) {
+                localStorage.removeItem('token');
+                dispatch(clearUser());
+                toast.success(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.error(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${'có lỗi: ' + error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    });
 
     const handleClick = (event) => {
         setShow(!show);
@@ -27,6 +79,10 @@ export const ControlUserComponent = () => {
 
     };
 
+    const handleLogout = async () => {
+        await mutation.mutateAsync();
+    }
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -36,9 +92,13 @@ export const ControlUserComponent = () => {
 
     return (
         <div className='ControlUserComponent'>
-            <span className='ControlUserComponent__UserName'>Thucdn04</span>
+            <span className='ControlUserComponent__UserName'>{user.username}</span>
             <span onClick={handleClick} className='ControlUserComponent__Manager'>
-                <Image id='imgUser' width={50} height={50} src={User} alt='user' />
+                <Image loading='lazy' id='imgUser' width={50} height={50}
+                    crossOrigin='anonymous'
+                    src={user.avatar !== null ?
+                        `${process.env.REACT_APP_DB_HOST}/public/${user.avatar}` :
+                        User} alt='user' />
             </span>
 
             <Overlay
@@ -59,8 +119,20 @@ export const ControlUserComponent = () => {
                         <li className='popover-user__list__item'>
                             <NavLink to='/user/quan-ly-tai-khoan'>Cài đặt thông tin</NavLink>
                         </li>
+                        {/* admin */}
+                        {user?.role === 'admin' && (
+                            <li className='popover-user__list__item'>
+                                <NavLink to='/admin/quan-ly-tai-khoan'>Quản lý web (dành cho admin)</NavLink>
+                            </li>
+                        )}
+                        {/* authors */}
+                        {user?.role === 'author' || user?.role === 'admin' ? (
+                            <li className='popover-user__list__item'>
+                                <NavLink to='/author/truyen-da-xuat-ban'>Quản lý Truyện (dành cho tác giả)</NavLink>
+                            </li>
+                        ) : ''}
                         <li className='popover-user__list__item'>
-                            <NavLink to='/logout'>Đăng xuất</NavLink>
+                            <NavLink onClick={handleLogout} to='/'>Đăng xuất</NavLink>
                         </li>
                     </ul>
                 </Popover>

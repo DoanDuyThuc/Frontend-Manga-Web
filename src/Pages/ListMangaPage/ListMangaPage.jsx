@@ -38,7 +38,7 @@ export const ListMangaPage = () => {
                         </div>
 
                         <div className='ListMangaPage__main__Filter__searchForm__reset'>
-                            <a href="/truyen-moi-cap-nhat/1">
+                            <a href="/guest/truyen-moi-cap-nhat/1">
                                 <GrPowerReset />
                                 <span>Reset</span>
                             </a>

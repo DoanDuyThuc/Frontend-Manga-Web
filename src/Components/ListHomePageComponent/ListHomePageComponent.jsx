@@ -66,7 +66,7 @@ export const ListHomePageComponent = () => {
             </div>
 
             <div className='ListHomePage__ListHomePageSeeMore'>
-                <NavLink to='/truyen-moi-cap-nhat/1'>Xem thêm nhiều truyện</NavLink>
+                <NavLink to='/guest/truyen-moi-cap-nhat/1'>Xem thêm nhiều truyện</NavLink>
             </div>
         </Container>
     )

@@ -8,8 +8,11 @@ import { Button, Image, Modal } from 'react-bootstrap';
 import { FormLoginSigninComponent } from '../FormLoginSigninComponent/FormLoginSigninComponent';
 import { ButtonLoginSignin } from '../ButtonLoginSignin/ButtonLoginSignin';
 import { ControlUserComponent } from '../ControlUserComponent/ControlUserComponent';
+import { useSelector } from 'react-redux';
 
 export const HeaderTop = () => {
+
+    const user = useSelector(state => state?.user);
 
     const [showForm, setShowForm] = useState(false);
     const [isFormNow, setisFormNow] = useState('');
@@ -22,7 +25,6 @@ export const HeaderTop = () => {
         setShowForm(true)
     };
 
-
     return (
 
         <>
@@ -30,7 +32,7 @@ export const HeaderTop = () => {
                 <div className='HeaderComponent__Top__middle'>
                     <div className='HeaderComponent__Top__middle__Left'>
                         <a href='/' className='HeaderComponent__Top__middle__Left__logo'>
-                            <img src={Logo1} alt='logo' />
+                            <img loading='lazy' src={Logo1} alt='logo' />
                         </a>
 
                         <div className='HeaderComponent__Top__middle__Left__Search' >
@@ -40,15 +42,19 @@ export const HeaderTop = () => {
                     </div>
 
                     <div className='HeaderComponent__Top__middle__Right'>
-                        <ControlUserComponent />
 
-                        {/* <ButtonLoginSignin handleShowForm={handleShowForm} /> */}
+                        {user.isLogin ? (
+                            <ControlUserComponent />
+
+                        ) : (
+                            <ButtonLoginSignin handleShowForm={handleShowForm} />
+                        )}
                     </div>
                 </div>
             </div>
 
             <Modal centered show={showForm} onHide={handleCloseForm}>
-                <FormLoginSigninComponent setisFormNow={setisFormNow} isFormNow={isFormNow} />
+                <FormLoginSigninComponent setisFormNow={setisFormNow} isFormNow={isFormNow} setShowForm={setShowForm} />
             </Modal>
         </>
     )

@@ -6,23 +6,42 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { persistor, store } from './redux/store'
+import { Provider } from 'react-redux'
+
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { PersistGate } from 'redux-persist/integration/react';
+
+// Create a client
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: "/*",
-    element: <App />,
+    element:
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={router} />
+      </PersistGate>
+    </Provider>
   </React.StrictMode>
 );
 

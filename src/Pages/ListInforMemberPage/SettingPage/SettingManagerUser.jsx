@@ -4,11 +4,19 @@ import * as formik from 'formik';
 import * as yup from 'yup';
 
 import User from '../../../public/images/user.png'
+import { useDispatch, useSelector } from 'react-redux';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { UpdateProfileService } from '../../../services/UserService';
+import { toast } from 'react-toastify';
+import { setUserId } from '../../../redux/user/userSlice';
 
 export const SettingManagerUser = () => {
 
-    const { Formik } = formik;
+    const dispatch = useDispatch();
+    const user = useSelector(state => state?.user);
+    const queryClient = useQueryClient();
 
+    const { Formik } = formik;
 
     const [preview, setPreview] = useState(null);
 
@@ -18,37 +26,108 @@ export const SettingManagerUser = () => {
     });
 
     const handleFileChange = (e, setFieldValue) => {
+
         const file = e.target.files[0];
+
         setFieldValue('avatar', file);
         if (file) {
             setPreview(URL.createObjectURL(file));
         }
     };
 
+    // mutations
+
+    const uploadMutaion = useMutation(
+        {
+            mutationFn: UpdateProfileService,
+            onMutate: async (Data) => {
+                await queryClient.cancelQueries('getAllUser');
+                const previousValue = queryClient.getQueryData('getAllUser');
+                queryClient.setQueryData('getAllUser', (old) => {
+                    return old;
+                });
+                return previousValue;
+            },
+            onSuccess: (data) => {
+                queryClient.setQueryData('currentUser', (oldData) => ({
+                    ...oldData,
+                    ...data,
+                }));
+
+                if (!data.error) {
+                    dispatch(setUserId(data?.data));
+                    toast.success(`🐉 ${data?.message}`, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                } else {
+                    toast.error(`🐉 ${data?.message}`, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                }
+
+
+            },
+            onSettled: () => {
+                queryClient.invalidateQueries('getAllUser');
+            },
+            onError: (error) => {
+                toast.error(`🐉 ${'đăng nhập thất bại: ' + error}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            },
+        }
+    );
+
     return (
         <div className='ListInforMemberPage__main__content'>
             <Formik
                 initialValues={
                     {
-                        avatar: 'anh1',
-                        username: 'thucdn04',
+                        avatar: user.avatar !== null ? user.avatar : User,
+                        username: user.username,
                     }
                 }
+                enableReinitialize={true}
                 validationSchema={validationSchema}
-                onSubmit={(values) => {
+                onSubmit={async (values) => {
+
 
                     const formData = new FormData();
                     formData.append('username', values.username);
+                    formData.append('type', 'avatar');
 
                     if (values.avatar) {
                         formData.append('avatar', values.avatar);
+                    } else {
+                        console.warn('No avatar selected');
                     }
 
-                    console.log(formData.get('avatar'));
-                    console.log(formData.get('username'));
+                    await uploadMutaion.mutateAsync({ token: user.token, formData: formData });
+
                 }}
             >
-                {({ handleSubmit, setFieldValue, values, errors, touched }) => (
+                {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
                     <Form className='ListInforMemberPage__main__content__form' onSubmit={handleSubmit}>
                         <Form.Group controlId="formFile" className="ListInforMemberPage__main__content__form__item">
                             <div className="d-flex flex-column align-items-center">
@@ -63,7 +142,9 @@ export const SettingManagerUser = () => {
                                     {preview ? (
                                         <Image src={preview} roundedCircle height={80} width={80} alt="avatar preview" />
                                     ) : (
-                                        <Image src={User} roundedCircle height={80} width={80} alt="choose avatar" />
+                                        <Image crossOrigin="anonymous" src={user.avatar !== null ?
+                                            `${process.env.REACT_APP_DB_HOST}/public/${user.avatar}` : User}
+                                            roundedCircle height={80} width={80} alt="choose avatar" />
                                     )}
                                 </label>
                             </div>
@@ -84,8 +165,8 @@ export const SettingManagerUser = () => {
                                 </span>
 
                                 <ProgressBar className='ListInforMemberPage__main__content__form__levelUser__skill__progress'
-                                    now={50}
-                                    label={`${50}%`}
+                                    now={user.point}
+                                    label={`${user.point}%`}
                                 />
                             </div>
                         </div>
@@ -97,7 +178,7 @@ export const SettingManagerUser = () => {
                                 <formik.Field
                                     name="diem"
                                     className="form-control"
-                                    value={16}
+                                    value={user.point}
                                     disabled
                                 />
                             </Form.Group>
@@ -106,7 +187,7 @@ export const SettingManagerUser = () => {
                                 <formik.Field
                                     name="email"
                                     className="form-control"
-                                    value={'thucdn04@gmail.com'}
+                                    value={user.email}
                                     disabled
                                 />
                             </Form.Group>
@@ -115,8 +196,10 @@ export const SettingManagerUser = () => {
                                 <Form.Label>UserName:</Form.Label>
                                 <formik.Field
                                     name="username"
+                                    type='text'
                                     className="form-control"
-                                    value={values.username}
+                                    // value={values.username}
+                                    as={Form.Control}
                                 />
                             </Form.Group>
 

@@ -9,6 +9,10 @@
 
     &__Manager {
         cursor: pointer;
+
+        >img {
+            border-radius: 50%;
+        }
     }
 }
 

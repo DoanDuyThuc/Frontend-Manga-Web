@@ -88,7 +88,7 @@ export const CommentComponent = () => {
                 <article className='CommentComponent__main__listComment__item'>
                     <div className='CommentComponent__main__listComment__item__content'>
                         <div className='CommentComponent__main__listComment__item__content__avartar'>
-                            <img src={avartarNotUser} alt="avart" />
+                            <img loading='lazy' src={avartarNotUser} alt="avart" />
                         </div>
                         <div className='CommentComponent__main__listComment__item__content__comment'>
                             <div className='CommentComponent__main__listComment__item__content__comment__name'>
@@ -103,7 +103,7 @@ export const CommentComponent = () => {
                 <article className='CommentComponent__main__listComment__item'>
                     <div className='CommentComponent__main__listComment__item__content'>
                         <div className='CommentComponent__main__listComment__item__content__avartar'>
-                            <img src={avartarNotUser} alt="avart" />
+                            <img loading='lazy' src={avartarNotUser} alt="avart" />
                         </div>
                         <div className='CommentComponent__main__listComment__item__content__comment'>
                             <div className='CommentComponent__main__listComment__item__content__comment__name'>
@@ -118,7 +118,7 @@ export const CommentComponent = () => {
                 <article className='CommentComponent__main__listComment__item'>
                     <div className='CommentComponent__main__listComment__item__content'>
                         <div className='CommentComponent__main__listComment__item__content__avartar'>
-                            <img src={avartarNotUser} alt="avart" />
+                            <img loading='lazy' src={avartarNotUser} alt="avart" />
                         </div>
                         <div className='CommentComponent__main__listComment__item__content__comment'>
                             <div className='CommentComponent__main__listComment__item__content__comment__name'>

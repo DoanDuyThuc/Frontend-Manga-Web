@@ -29,7 +29,7 @@ export const DetailMangaPage = () => {
                     </li>
                     <span>/</span>
                     <li>
-                        <NavLink to='/truyen-tranh/one-piece'>One Piece</NavLink>
+                        <NavLink to='/guest/truyen-tranh/one-piece'>One Piece</NavLink>
                     </li>
                 </ol>
 
@@ -37,7 +37,7 @@ export const DetailMangaPage = () => {
 
                     <div className='DetailMangaPage__main__info__Avartar'>
 
-                        <img src='https://static2.truyentranhonl.com/img-comic/dao-hai-tac.jpg' alt='one-piece' />
+                        <img loading='lazy' src='https://static2.truyentranhonl.com/img-comic/dao-hai-tac.jpg' alt='one-piece' />
                     </div>
                     <div className='DetailMangaPage__main__info__other'>
                         <h1>One Piece</h1>
@@ -126,34 +126,34 @@ export const DetailMangaPage = () => {
 
                         <ul className='DetailMangaPage__main__info__other__listType'>
                             <li>
-                                <NavLink to='/truyen-tranh/one-piece'>Action</NavLink>
+                                <NavLink to='/guest/truyen-tranh/one-piece'>Action</NavLink>
                             </li>
                             <li>
-                                <NavLink to='/truyen-tranh/one-piece'>Drama</NavLink>
+                                <NavLink to='/guest/truyen-tranh/one-piece'>Drama</NavLink>
                             </li>
                             <li>
-                                <NavLink to='/truyen-tranh/one-piece'>Fantasy</NavLink>
+                                <NavLink to='/guest/truyen-tranh/one-piece'>Fantasy</NavLink>
                             </li>
                             <li>
-                                <NavLink to='/truyen-tranh/one-piece'>Supernatural</NavLink>
+                                <NavLink to='/guest/truyen-tranh/one-piece'>Supernatural</NavLink>
                             </li>
                         </ul>
 
                         <ul className='DetailMangaPage__main__info__other__menuStory'>
                             <li>
-                                <NavLink style={{ backgroundColor: '#8bc34a' }} to='/truyen-tranh/one-piece'>
+                                <NavLink style={{ backgroundColor: '#8bc34a' }} to='/guest/truyen-tranh/one-piece'>
                                     <FaBook />
                                     <span>Đọc từ đầu</span>
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink style={{ backgroundColor: '#ff3860' }} to='/truyen-tranh/one-piece'>
+                                <NavLink style={{ backgroundColor: '#ff3860' }} to='/guest/truyen-tranh/one-piece'>
                                     <FaHeart />
                                     <span>Theo dõi</span>
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink style={{ backgroundColor: '#bd10e0' }} to='/truyen-tranh/one-piece'>
+                                <NavLink style={{ backgroundColor: '#bd10e0' }} to='/guest/truyen-tranh/one-piece'>
                                     <AiFillLike />
                                     <span>Thích</span>
                                 </NavLink>
@@ -198,7 +198,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -217,7 +217,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -236,7 +236,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -255,7 +255,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -274,7 +274,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -293,7 +293,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -312,7 +312,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -331,7 +331,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -350,7 +350,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -369,7 +369,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -388,7 +388,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -407,7 +407,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -426,7 +426,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -445,7 +445,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -464,7 +464,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -483,7 +483,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -502,7 +502,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -521,7 +521,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -540,7 +540,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -559,7 +559,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>
@@ -578,7 +578,7 @@ export const DetailMangaPage = () => {
                                     <Col lg={8}>
                                         <NavLink
                                             className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/truyen-tranh/one-piece/1'
+                                            to='/guest/truyen-tranh/one-piece/1'
                                         >
                                             Chapter 1: Đảo Hải Tặc
                                         </NavLink>

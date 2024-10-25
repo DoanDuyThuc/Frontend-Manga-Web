@@ -3,11 +3,21 @@ import Form from 'react-bootstrap/Form';
 import * as formik from 'formik';
 import * as yup from 'yup';
 
+import { toast } from 'react-toastify'
+import { useDispatch } from "react-redux";
+import { setUserId } from "../../redux/user/userSlice";
+
 import './FormLoginSigninComponent.scss'
 import { Col } from 'react-bootstrap';
 import { FaFacebookF, FaGoogle } from 'react-icons/fa';
+import { LoginInService, SignInService } from '../../services/UserService';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const FormLoginSigninComponent = ({ setisFormNow, isFormNow }) => {
+export const FormLoginSigninComponent = ({ setisFormNow, isFormNow, setShowForm }) => {
+
+    const dispatch = useDispatch();
+
+    const queryClient = useQueryClient();
 
     const { Formik } = formik;
 
@@ -17,6 +27,52 @@ export const FormLoginSigninComponent = ({ setisFormNow, isFormNow }) => {
         password: yup.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự").required("Vui lòng nhập mật khẩu"),
     });
 
+    //mutation login
+    const mutation = useMutation({
+        mutationFn: LoginInService,
+        onSuccess: (data) => {
+
+            if (!data.error) {
+                localStorage.setItem('token', data.token);
+                dispatch(setUserId(data));
+                toast.success(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.error(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+            setShowForm(false);
+
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${'đăng nhập thất bại: ' + error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    });
 
     return (
 
@@ -25,8 +81,32 @@ export const FormLoginSigninComponent = ({ setisFormNow, isFormNow }) => {
             <Formik
                 validationSchema={schema}
                 onSubmit={
-                    (values) => {
-                        console.log(values)
+                    async (values) => {
+                        if (isFormNow === 'dangky') {
+
+                            const response = await SignInService({
+                                username: values.username,
+                                email: values.email,
+                                password: values.password
+                            });
+                            if (!response?.error) {
+                                toast(`🐉 ${response?.message}`, {
+                                    position: "top-right",
+                                    autoClose: 5000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "light",
+                                });
+
+                                setisFormNow('dangnhap')
+                            }
+                        } else if (isFormNow === 'dangnhap') {
+                            await mutation.mutateAsync({ email: values.email, password: values.password });
+
+                        }
                     }
                 }
                 initialValues={{

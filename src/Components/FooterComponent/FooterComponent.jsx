@@ -13,10 +13,11 @@ export const FooterComponent = () => {
                 <Row >
                     <Col lg={6} className='FooterComponent__middle__left'>
                         <a href='/'>
-                            <img src={Logo} alt='logo' />
+                            <img loading='lazy' src={Logo} alt='logo' />
                         </a>
                         <p>
                             <iframe
+                                loading='lazy'
                                 src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61566114167887&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
                                 width="340"
                                 height="130"
