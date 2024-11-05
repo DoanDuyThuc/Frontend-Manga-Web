@@ -1,12 +1,99 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import './DetailChapterPage.scss'
-import { NavLink } from 'react-bootstrap'
 import { MdError } from 'react-icons/md'
 import { BiSolidErrorAlt } from 'react-icons/bi'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { CommentComponent } from '../../Components/CommentComponent/CommentComponent'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { NavLink, useLocation, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { format } from 'date-fns';
+import { AddLichSuTruyenService, GetChuongHomeService } from '../../services/HomeService'
+import { useSelector } from 'react-redux'
 
 export const DetailChapterPage = () => {
+
+    const { truyen_ma, TruyenId, ChuongId } = useParams();
+    const user = useSelector(state => state.user);
+
+    const queryClient = useQueryClient();
+
+    const location = useLocation();
+
+    const [dataChuong, setDataChuong] = useState({});
+    const [isTimedOut, setIsTimedOut] = useState(false);
+
+    const hasVisitedRef = useRef(false);
+
+    const { data } = useQuery({
+        queryKey: ['GetChuong', { TruyenId, ChuongId }],
+        queryFn: async ({ queryKey }) => {
+            const [, { TruyenId, ChuongId }] = queryKey;
+            const response = await GetChuongHomeService({ truyenid: TruyenId, chuongid: ChuongId });
+            return response;
+        },
+        enabled: !!TruyenId || !!ChuongId,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    })
+
+    //mutation
+    const mutationAddLichSuTruyen = useMutation({
+        mutationFn: AddLichSuTruyenService,
+        onMutate: async (Data) => {
+            await queryClient.cancelQueries('Get-history');
+            const previousValue = queryClient.getQueryData('Get-history');
+            queryClient.setQueryData('Get-history', (old) => {
+                return old;
+            });
+            return previousValue;
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('Get-history');
+        },
+        onError: (error) => {
+        },
+    });
+
+    useEffect(() => {
+        if (data) {
+            setDataChuong(data?.data);
+        }
+    }, [data])
+
+    useEffect(() => {
+        window.scrollBy({
+            top: -window.scrollY,
+            left: 0,
+            behavior: 'smooth'
+        });
+    }, [ChuongId]);
+
+    useEffect(() => {
+        if (!hasVisitedRef.current) {
+            handleAddHistory();
+            hasVisitedRef.current = true;
+        }
+    }, [location.pathname]);
+
+    const handleAddHistory = async () => {
+        if (user?.isLogin && user.token !== '') {
+            await mutationAddLichSuTruyen.mutateAsync({ token: user.token, truyen_id: TruyenId, user_id: user.userId });
+            setIsTimedOut(false);
+        }
+    };
+
+    const time = dataChuong?.updatedAt;
+    let timeAgo = "Invalid date";
+
+    if (time) {
+        try {
+            timeAgo = format(new Date(time), 'dd/MM/yyyy');
+        } catch (error) {
+            console.error("Error formatting date:", error);
+        }
+    }
+
     return (
         <div className='DetailChapterPage'>
             <div className='DetailChapterPage__Hold'>
@@ -19,22 +106,22 @@ export const DetailChapterPage = () => {
                             </li>
                             /
                             <li>
-                                <NavLink to='/'>One Piece</NavLink>
+                                <NavLink to={`/guest/truyen-tranh/${truyen_ma}`}>{truyen_ma}</NavLink>
                             </li>
                             /
                             <li>
-                                <NavLink to='/'>Chap 1</NavLink>
+                                <NavLink to={`/guest/truyen-tranh/${truyen_ma}/${dataChuong?.id}`}>Chap {dataChuong?.Chuong_so}</NavLink>
                             </li>
                         </ol>
                     </div>
 
                     <div className='DetailChapterPage__Hold__Control__Title'>
                         <h1>
-                            <NavLink to='/'>One Piece</NavLink>
-                            - <span>Chapter 1</span>
+                            <NavLink style={{ textDecoration: 'none', color: '#000' }} to={`/guest/truyen-tranh/${truyen_ma}`}>{dataChuong?.Chuong_ten}</NavLink>
+                            - <span>Chapter {dataChuong?.Chuong_so}</span>
                         </h1>
 
-                        <time datetime="2024-10-03T06:37:10+07:00">(Cập nhật lúc: 15:37 03/10/2024)</time>
+                        <time dateTime={time}>(Cập nhật lúc: {timeAgo})</time>
                     </div>
 
                     <div className='DetailChapterPage__Hold__Control__Server'>
@@ -59,11 +146,17 @@ export const DetailChapterPage = () => {
                     </div>
 
                     <div className='DetailChapterPage__Hold__Control__Server__navigate'>
-                        <NavLink to='/'>
+                        <NavLink
+                            className={ChuongId === '1' ? 'Isdisabled' : ''}
+                            to={`/guest/truyen-tranh/${truyen_ma}/${TruyenId}/${Number(ChuongId - 1)}`}
+                        >
                             <FaArrowLeft />
                             <span>Chap trước</span>
                         </NavLink>
-                        <NavLink to='/'>
+                        <NavLink
+                            className={Number(ChuongId) === data?.ChuongLength ? 'Isdisabled' : ''}
+                            to={`/guest/truyen-tranh/${truyen_ma}/${TruyenId}/${Number(ChuongId) + 1}`}
+                        >
                             <span> Chap sau</span>
                             <FaArrowRight />
                         </NavLink>
@@ -72,47 +165,37 @@ export const DetailChapterPage = () => {
 
                 <div className='DetailChapterPage__Hold__Content'>
                     <div style={{ overflow: 'hidden' }}>
-                        <div className='DetailChapterPage__Hold__Content__chapter'>
-                            <img loading='lazy'
-                                className='DetailChapterPage__Hold__Content__chapter__img lazy'
-                                src="https://comic.2886b34bc4d6b7dbcfb8fec2f604f053.r2.cloudflarestorage.com/one-piece/chapter-1/one-piece-0.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a0668b7685da6d21d71abc52cdfe8a6%2F20241003%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20241003T173041Z&X-Amz-Expires=3600&X-Amz-Signature=81b0b514d850106b25ebc5e657b2473421a6c0311980255a921306828033523a&X-Amz-SignedHeaders=host&x-id=GetObject"
-                                alt=""
-                            />
-                        </div>
+                        {dataChuong?.chuong_hinhanhs && dataChuong?.chuong_hinhanhs.length > 0 ?
+                            dataChuong?.chuong_hinhanhs.sort((a, b) => a.sort_order - b.sort_order).map((item, index) => (
+                                <div key={index} className='DetailChapterPage__Hold__Content__chapter'>
+                                    <img loading='lazy'
+                                        crossOrigin='anonymous'
+                                        className='DetailChapterPage__Hold__Content__chapter__img lazy'
+                                        src={`${process.env.REACT_APP_DB_HOST}/public${item?.chuong_hinhanh_link}`}
+                                        alt="ảnh"
+                                    />
+                                </div>
 
-                        <div className='DetailChapterPage__Hold__Content__chapter'>
-                            <img loading='lazy'
-                                className='DetailChapterPage__Hold__Content__chapter__img lazy'
-                                src="https://comic.2886b34bc4d6b7dbcfb8fec2f604f053.r2.cloudflarestorage.com/one-piece/chapter-1/one-piece-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a0668b7685da6d21d71abc52cdfe8a6%2F20241003%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20241003T173041Z&X-Amz-Expires=3600&X-Amz-Signature=7c089f15855f9d87d5d28cb88c49ec8e301573d78e8d794c5ee578a495ecfdef&X-Amz-SignedHeaders=host&x-id=GetObject"
-                                alt=""
-                            />
-                        </div>
+                            )) : (
+                                <p >Chưa có nội dung truyện</p>
+                            )}
 
-                        <div className='DetailChapterPage__Hold__Content__chapter'>
-                            <img loading='lazy'
-                                className='DetailChapterPage__Hold__Content__chapter__img lazy'
-                                src="https://comic.2886b34bc4d6b7dbcfb8fec2f604f053.r2.cloudflarestorage.com/one-piece/chapter-1/one-piece-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a0668b7685da6d21d71abc52cdfe8a6%2F20241003%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20241003T173041Z&X-Amz-Expires=3600&X-Amz-Signature=7c089f15855f9d87d5d28cb88c49ec8e301573d78e8d794c5ee578a495ecfdef&X-Amz-SignedHeaders=host&x-id=GetObject"
-                                alt=""
-                            />
-                        </div>
-
-                        <div className='DetailChapterPage__Hold__Content__chapter'>
-                            <img loading='lazy'
-                                className='DetailChapterPage__Hold__Content__chapter__img lazy'
-                                src="https://comic.2886b34bc4d6b7dbcfb8fec2f604f053.r2.cloudflarestorage.com/one-piece/chapter-1/one-piece-2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a0668b7685da6d21d71abc52cdfe8a6%2F20241003%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20241003T173041Z&X-Amz-Expires=3600&X-Amz-Signature=98fd6eb447469cf7fe63005e57ea4f2d250f2b574f63a31c6eada5c5ab29d4f6&X-Amz-SignedHeaders=host&x-id=GetObject"
-                                alt=""
-                            />
-                        </div>
                     </div>
                 </div>
 
                 <div className='DetailChapterPage__Hold__Control'>
                     <div className='DetailChapterPage__Hold__Control__Server__navigate'>
-                        <NavLink to='/'>
+                        <NavLink
+                            className={ChuongId === '1' ? 'Isdisabled' : ''}
+                            to={`/guest/truyen-tranh/${truyen_ma}/${TruyenId}/${Number(ChuongId - 1)}`}
+                        >
                             <FaArrowLeft />
                             <span>Chap trước</span>
                         </NavLink>
-                        <NavLink to='/'>
+                        <NavLink
+                            className={Number(ChuongId) === data?.ChuongLength ? 'Isdisabled' : ''}
+                            to={`/guest/truyen-tranh/${truyen_ma}/${TruyenId}/${Number(ChuongId) + 1}`}
+                        >
                             <span> Chap sau</span>
                             <FaArrowRight />
                         </NavLink>

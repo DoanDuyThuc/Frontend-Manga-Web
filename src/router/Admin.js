@@ -40,12 +40,12 @@ const AdminRouter =
             isLayoutAdmin: true,
         },
         {
-            path: '/chapter/:id',
+            path: '/chapter/:id/:ChuongId',
             page: ManagerDetailChuong,
             isLayoutAdmin: true,
         },
         {
-            path: '/update-chuong/:id',
+            path: '/update-chuong/:id/:ChuongId',
             page: UpdateChuong,
             isLayoutAdmin: true,
         },

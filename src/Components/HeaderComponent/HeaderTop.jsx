@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './HeaderComponent.scss'
 import { IoSearch } from "react-icons/io5";
 
@@ -9,6 +9,7 @@ import { FormLoginSigninComponent } from '../FormLoginSigninComponent/FormLoginS
 import { ButtonLoginSignin } from '../ButtonLoginSignin/ButtonLoginSignin';
 import { ControlUserComponent } from '../ControlUserComponent/ControlUserComponent';
 import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const HeaderTop = () => {
 
@@ -17,6 +18,9 @@ export const HeaderTop = () => {
     const [showForm, setShowForm] = useState(false);
     const [isFormNow, setisFormNow] = useState('');
 
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+
     const handleCloseForm = () => setShowForm(false);
     const handleShowForm = (e) => {
 
@@ -24,6 +28,20 @@ export const HeaderTop = () => {
 
         setShowForm(true)
     };
+
+    // handle
+    const handleSearchChange = (event) => {
+        const value = event.target.value;
+        setSearchTerm(value);
+    };
+
+    const handleSearchBtn = () => {
+        if (searchTerm) {
+            navigate(`/guest/truyen-moi-cap-nhat/?search=${searchTerm}`);
+        } else {
+            navigate('/');
+        }
+    }
 
     return (
 
@@ -36,8 +54,19 @@ export const HeaderTop = () => {
                         </a>
 
                         <div className='HeaderComponent__Top__middle__Left__Search' >
-                            <input className='HeaderComponent__Top__middle__Left__Search__SearchInput' placeholder='Search' />
-                            <button className='HeaderComponent__Top__middle__Left__Search__SearchButton'><IoSearch /></button>
+                            <input
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        if (searchTerm) {
+                                            navigate(`/guest/truyen-moi-cap-nhat/?search=${searchTerm}`);
+                                        } else {
+                                            navigate('/');
+                                        }
+                                    }
+                                }}
+                                onChange={(event) => handleSearchChange(event)}
+                                className='HeaderComponent__Top__middle__Left__Search__SearchInput' placeholder='Search' />
+                            <button onClick={() => handleSearchBtn()} className='HeaderComponent__Top__middle__Left__Search__SearchButton'><IoSearch /></button>
                         </div>
                     </div>
 

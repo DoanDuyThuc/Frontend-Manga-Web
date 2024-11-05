@@ -7,7 +7,7 @@ import { CartItemComponent } from '../CartItemComponent/CartItemComponent';
 import { Container } from 'react-bootstrap';
 
 
-const SliderHomeComponent = () => {
+const SliderHomeComponent = ({ dataTruyens }) => {
 
     //custom arrow
     function NextArrow(props) {
@@ -89,15 +89,9 @@ const SliderHomeComponent = () => {
                 </div>
             </h2>
             <Slider  {...settings}>
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
-                <CartItemComponent />
+                {dataTruyens.slice(0, 10).map((item, index) => (
+                    <CartItemComponent key={index} item={item} marginZero={false} deleted={false} />
+                ))}
 
             </Slider>
         </Container>

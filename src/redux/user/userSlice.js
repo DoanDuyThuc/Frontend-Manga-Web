@@ -35,9 +35,12 @@ export const userSlice = createSlice({
             state.avatar = null;
             state.token = '';
         },
+        refreshToken: (state, action) => {
+            state.token = action.payload
+        }
     },
 })
 
-export const { setUserId, clearUser } = userSlice.actions
+export const { setUserId, clearUser, refreshToken } = userSlice.actions
 
 export default userSlice.reducer

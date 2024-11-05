@@ -1,24 +1,171 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import './DetailMangaPage.scss'
-import { NavLink } from 'react-router-dom'
-import { Col, Row } from 'react-bootstrap'
+import { NavLink, useLocation } from 'react-router-dom'
+import { Button, Col, Row } from 'react-bootstrap'
 import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import { FaUser, FaHeart, FaRegEye, FaThList } from "react-icons/fa";
 import { AiFillFire, AiFillLike } from "react-icons/ai";
 import { IoMdText } from "react-icons/io";
 import { FaBook } from "react-icons/fa6";
 import { motion } from 'framer-motion';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom';
+import { GetTruyenService } from '../../services/TruyenService';
+import { useSelector } from 'react-redux';
+import { format } from 'date-fns';
 
 import { CommentComponent } from '../../Components/CommentComponent/CommentComponent';
+import { AddFollowTruyenService, UpdateLuotXemService } from '../../services/HomeService';
+import { toast } from 'react-toastify';
 
 export const DetailMangaPage = () => {
 
+    const location = useLocation();
+
+    const queryClient = useQueryClient();
+
+    const navigate = useNavigate();
+
+    const hasVisitedRef = useRef(false);
+
     const [isShowMore, setIsShowMore] = useState(false);
+    const [dataTruyen, setDataTruyen] = useState([]);
+    const { truyen_ma } = useParams();
+    const { pathname } = useLocation();
+    const user = useSelector(state => state.user);
+
+    //query
+    const { data } = useQuery({
+        queryKey: ['GetTruyen', truyen_ma],
+        queryFn: async ({ queryKey }) => {
+            const [, truyen_ma] = queryKey;
+            const res = await GetTruyenService({ truyen_ma });
+            return res;
+        },
+        enabled: !!truyen_ma,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    })
+
+    //mutation
+
+    const mutationAddFollowTruyen = useMutation({
+        mutationFn: AddFollowTruyenService,
+        onMutate: async (Data) => {
+            await queryClient.cancelQueries('Get-Follow');
+            const previousValue = queryClient.getQueryData('Get-Follow');
+            queryClient.setQueryData('Get-Follow', (old) => {
+                return old;
+            });
+            return previousValue;
+        },
+        onSuccess: (data) => {
+            if (!data.error) {
+                toast.success(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.error(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('Get-Follow');
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    })
+
+    const mutationUpdateLuotXem = useMutation({
+        mutationFn: UpdateLuotXemService,
+        onMutate: async (Data) => {
+            await queryClient.cancelQueries('GetTruyen');
+            const previousValue = queryClient.getQueryData('GetTruyen');
+            queryClient.setQueryData('GetTruyen', (old) => {
+                return old;
+            });
+            return previousValue;
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('GetTruyen');
+        },
+        onError: (error) => {
+        },
+    })
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (data) {
+            setDataTruyen(data.data)
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (!hasVisitedRef.current && dataTruyen.length !== 0) {
+            handleUpdateLuotXem();
+            hasVisitedRef.current = true;
+        }
+    }, [location.pathname, dataTruyen]);
+
+    const handleUpdateLuotXem = async () => {
+        await mutationUpdateLuotXem.mutateAsync({ truyen_id: dataTruyen?.id });
+    }
+
+
+    //handle
+    const handleFollowTruyen = async () => {
+
+        if (!user.isLogin) {
+            toast.error(`🐉 Bạn cần đăng nhập để thực hiện chức năng này`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            return;
+        } else {
+            await mutationAddFollowTruyen.mutateAsync({ token: user.token, truyen_id: dataTruyen?.id, user_id: user.userId });
+            navigate(`/user/truyen-dang-theo-doi`);
+        }
+    }
 
     const handleIsShowMore = () => {
         setIsShowMore(!isShowMore);
     }
+
 
     return (
         <div className='DetailMangaPage'>
@@ -29,7 +176,7 @@ export const DetailMangaPage = () => {
                     </li>
                     <span>/</span>
                     <li>
-                        <NavLink to='/guest/truyen-tranh/one-piece'>One Piece</NavLink>
+                        <NavLink to={`/guest/truyen-tranh/${dataTruyen?.truyen_ma}`}>{dataTruyen?.truyen_ma}</NavLink>
                     </li>
                 </ol>
 
@@ -37,10 +184,15 @@ export const DetailMangaPage = () => {
 
                     <div className='DetailMangaPage__main__info__Avartar'>
 
-                        <img loading='lazy' src='https://static2.truyentranhonl.com/img-comic/dao-hai-tac.jpg' alt='one-piece' />
+                        <img
+                            loading='lazy'
+                            crossOrigin='anonymous'
+                            src={`${process.env.REACT_APP_DB_HOST}/public${dataTruyen?.truyen_hinhanhdaidien}`}
+                            alt='one-piece'
+                        />
                     </div>
                     <div className='DetailMangaPage__main__info__other'>
-                        <h1>One Piece</h1>
+                        <h1>{dataTruyen?.truyen_ten}</h1>
                         <div className='DetailMangaPage__main__info__other__content'>
                             <ul>
                                 <li className='DetailMangaPage__main__info__other__content__item'>
@@ -52,7 +204,7 @@ export const DetailMangaPage = () => {
                                             </p>
                                         </Col>
                                         <Col lg={9} md={9} sm={9}>
-                                            <h2 className='DetailMangaPage__main__info__other__content__item__right' style={{ fontSize: '15px', fontWeight: 'lighter' }} >Vua Hải Tặc; Đảo Hải Tặc; OnePiece</h2>
+                                            <h2 className='DetailMangaPage__main__info__other__content__item__right' style={{ fontSize: '15px', fontWeight: 'lighter' }} >{dataTruyen?.truyen_ma}</h2>
                                         </Col>
                                     </Row>
                                 </li>
@@ -65,7 +217,7 @@ export const DetailMangaPage = () => {
                                             </p>
                                         </Col>
                                         <Col lg={9} md={9} sm={9}>
-                                            <p className='DetailMangaPage__main__info__other__content__item__right'>Eiichiro Oda</p>
+                                            <p className='DetailMangaPage__main__info__other__content__item__right'>{dataTruyen?.truyen_tacgia}</p>
                                         </Col>
                                     </Row>
                                 </li>
@@ -91,7 +243,7 @@ export const DetailMangaPage = () => {
                                             </p>
                                         </Col>
                                         <Col lg={9} md={9} sm={9}>
-                                            <p className='DetailMangaPage__main__info__other__content__item__right'>75880</p>
+                                            <p className='DetailMangaPage__main__info__other__content__item__right'>{dataTruyen?.truyen_luotthich}</p>
                                         </Col>
                                     </Row>
                                 </li>
@@ -104,7 +256,7 @@ export const DetailMangaPage = () => {
                                             </p>
                                         </Col>
                                         <Col lg={9} md={9} sm={9}>
-                                            <p className='DetailMangaPage__main__info__other__content__item__right'>211,461</p>
+                                            <p className='DetailMangaPage__main__info__other__content__item__right'>{dataTruyen?.truyen_luottheodoi}</p>
                                         </Col>
                                     </Row>
                                 </li>
@@ -117,7 +269,7 @@ export const DetailMangaPage = () => {
                                             </p>
                                         </Col>
                                         <Col lg={9} md={9} sm={9}>
-                                            <p className='DetailMangaPage__main__info__other__content__item__right'>458,349,002</p>
+                                            <p className='DetailMangaPage__main__info__other__content__item__right'>{dataTruyen?.truyen_luotxem}</p>
                                         </Col>
                                     </Row>
                                 </li>
@@ -125,32 +277,30 @@ export const DetailMangaPage = () => {
                         </div>
 
                         <ul className='DetailMangaPage__main__info__other__listType'>
-                            <li>
-                                <NavLink to='/guest/truyen-tranh/one-piece'>Action</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to='/guest/truyen-tranh/one-piece'>Drama</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to='/guest/truyen-tranh/one-piece'>Fantasy</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to='/guest/truyen-tranh/one-piece'>Supernatural</NavLink>
-                            </li>
+                            {dataTruyen?.TheLoais && dataTruyen?.TheLoais.length > 0 ? dataTruyen?.TheLoais.map((item, index) => (
+                                <li key={item.id}>
+                                    <NavLink to='/guest/truyen-tranh/one-piece'>{item.ten_theloai}</NavLink>
+                                </li>
+                            )) : <p>Chưa có thể loại</p>}
                         </ul>
 
                         <ul className='DetailMangaPage__main__info__other__menuStory'>
                             <li>
-                                <NavLink style={{ backgroundColor: '#8bc34a' }} to='/guest/truyen-tranh/one-piece'>
+                                <NavLink
+                                    className={dataTruyen?.Chuongs && dataTruyen?.Chuongs.length !== 0 ? '' : 'Isdisabled'}
+                                    style={{ backgroundColor: '#8bc34a' }}
+
+                                    to={`/guest/truyen-tranh/${dataTruyen?.truyen_ma}/${dataTruyen?.Chuongs && dataTruyen?.Chuongs.length !== 0 && dataTruyen?.Chuongs[0].TruyenId}/${dataTruyen?.Chuongs && dataTruyen?.Chuongs.length !== 0 && dataTruyen?.Chuongs[0].Chuong_so}`}
+                                >
                                     <FaBook />
                                     <span>Đọc từ đầu</span>
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink style={{ backgroundColor: '#ff3860' }} to='/guest/truyen-tranh/one-piece'>
+                                <button onClick={() => handleFollowTruyen()} style={{ backgroundColor: '#ff3860' }} >
                                     <FaHeart />
                                     <span>Theo dõi</span>
-                                </NavLink>
+                                </button>
                             </li>
                             <li>
                                 <NavLink style={{ backgroundColor: '#bd10e0' }} to='/guest/truyen-tranh/one-piece'>
@@ -175,7 +325,7 @@ export const DetailMangaPage = () => {
                         transition={{ duration: 0.5 }}
                     >
                         <p >
-                            One Piece là câu truyện kể về Luffy và các thuyền viên của mình. Khi còn nhỏ, Luffy ước mơ trở thành Vua Hải Tặc. Cuộc sống của cậu bé thay đổi khi cậu vô tình có được sức mạnh có thể co dãn như cao su, nhưng đổi lại, cậu không bao giờ có thể bơi được nữa. Giờ đây, Luffy cùng những người bạn hải tặc của mình ra khơi tìm kiếm kho báu One Piece, kho báu vĩ đại nhất trên thế giới. Trong One Piece, mỗi nhân vật trong đều mang một nét cá tính đặc sắc kết hợp cùng các tình huống kịch tính, lối dẫn truyện hấp dẫn chứa đầy các bước ngoặt bất ngờ và cũng vô cùng hài hước đã biến One Piece trở thành một trong những bộ truyện nổi tiếng nhất không thể bỏ qua. Hãy đọc One Piece để hòa mình vào một thế giới của những hải tặc rộng lớn, đầy màu sắc, sống động và thú vị, cùng đắm chìm với những nhân vật yêu tự do, trên hành trình đi tìm ước mơ của mình.
+                            {dataTruyen?.truyen_motangan}
                         </p>
                     </motion.div>
 
@@ -193,405 +343,27 @@ export const DetailMangaPage = () => {
                     </h3>
                     <div className='DetailMangaPage__main__menuChapter__list'>
                         <div className='DetailMangaPage__main__menuChapter__list__listContent'>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div className='DetailMangaPage__main__menuChapter__list__listContent__item'>
-                                <Row>
-                                    <Col lg={8}>
-                                        <NavLink
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
-                                            to='/guest/truyen-tranh/one-piece/1'
-                                        >
-                                            Chapter 1: Đảo Hải Tặc
-                                        </NavLink>
-                                    </Col>
-                                    <Col lg={4}>
-                                        <p
-                                            className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
-                                        >
-                                            10/10/2021
-                                        </p>
-                                    </Col>
-                                </Row>
-                            </div>
+                            {dataTruyen?.Chuongs && dataTruyen?.Chuongs.length > 0 ? dataTruyen?.Chuongs.map((item, index) => (
+                                <div key={item.id} className='DetailMangaPage__main__menuChapter__list__listContent__item'>
+                                    <Row>
+                                        <Col lg={8}>
+                                            <NavLink
+                                                className='DetailMangaPage__main__menuChapter__list__listContent__item__text'
+                                                to={`/guest/truyen-tranh/${dataTruyen?.truyen_ma}/${item.TruyenId}/${item.Chuong_so}`}
+                                            >
+                                                Chapter {item.Chuong_so}: {item.Chuong_ten}
+                                            </NavLink>
+                                        </Col>
+                                        <Col lg={4}>
+                                            <p
+                                                className='DetailMangaPage__main__menuChapter__list__listContent__item__day'
+                                            >
+                                                {format(new Date(item.createdAt), 'dd/MM/yyyy')}
+                                            </p>
+                                        </Col>
+                                    </Row>
+                                </div>
+                            )) : <p>Chưa có chương nào</p>}
                         </div>
                     </div>
                 </div>
@@ -599,6 +371,6 @@ export const DetailMangaPage = () => {
 
                 <CommentComponent />
             </div>
-        </div>
+        </div >
     )
 }

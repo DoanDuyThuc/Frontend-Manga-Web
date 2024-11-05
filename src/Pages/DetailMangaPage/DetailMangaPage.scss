@@ -168,7 +168,9 @@
                     >li {
                         padding: 10px 0px;
 
-                        >a {
+                        >a,
+                        button {
+                            height: 45px;
                             border-radius: 3px;
                             font-size: 15px;
                             color: $primary-text;

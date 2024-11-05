@@ -5,6 +5,8 @@ import storage from 'redux-persist/lib/storage';
 import userReducer from './user/userSlice';
 import counterReducer from './counter/counterSlice';
 import adminReducer from './admin/adminSlice';
+import authorReducer from './author/authorSlice';
+import homeReducer from './home/homeSlice';
 
 const persistConfig = {
     key: 'manga', // khóa lưu trữ
@@ -18,6 +20,8 @@ export const store = configureStore({
     reducer: {
         counter: counterReducer, // Giảm thiểu cho counter sẽ không được lưu trữ
         admin: adminReducer,
+        author: authorReducer,
+        home: homeReducer,
         user: persistedUserReducer, // Chỉ lưu trữ thông tin người dùng
     },
     middleware: (getDefaultMiddleware) =>

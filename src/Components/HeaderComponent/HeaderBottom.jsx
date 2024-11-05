@@ -12,12 +12,16 @@ import User from '../../public/images/user.png'
 
 import { FormLoginSigninComponent } from '../FormLoginSigninComponent/FormLoginSigninComponent';
 import { ControlUserComponent } from '../ControlUserComponent/ControlUserComponent';
+import { useQuery } from '@tanstack/react-query';
+import { GetAllTheLoaiService } from '../../services/TruyenService';
 
 export const HeaderBottom = ({ isDarkMode }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [text, setText] = useState('');
     const [isFormNow, setisFormNow] = useState('');
+
+    const [dataTheloais, setDataTheloais] = useState([]);
 
 
     const [showForm, setShowForm] = useState(false);
@@ -36,7 +40,22 @@ export const HeaderBottom = ({ isDarkMode }) => {
         setText(() => (isOpen ? '' : newText));
     };
 
+    const Theloais = useQuery({
+        queryKey: ['GetAllTheLoai', { page: '', limit: '', search: '' }],
+        queryFn: async ({ queryKey }) => {
+            const [, { page, limit, search }] = queryKey;
+            const response = await GetAllTheLoaiService({ page, limit, search });
+            return response;
+        },
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
 
+    useEffect(() => {
+        if (Theloais?.data) {
+            setDataTheloais(Theloais?.data?.data)
+        }
+    }, [Theloais]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -77,7 +96,7 @@ export const HeaderBottom = ({ isDarkMode }) => {
                                         }
                                             style={{ display: text === 'TheLoai' && window.innerWidth < 992 ? "grid" : "" }}
                                         >
-                                            <HeaderItemContent />
+                                            <HeaderItemContent dataTheloais={dataTheloais} />
                                         </div>
                                     </li>
                                     <li onClick={() => toggleContent('XepHang')} className='HeaderComponent__Bottom__nav__container__List__Item'>
@@ -90,7 +109,7 @@ export const HeaderBottom = ({ isDarkMode }) => {
                                         }
                                             style={{ display: text === 'XepHang' && window.innerWidth < 992 ? "grid" : "" }}
                                         >
-                                            <HeaderItemContent />
+                                            <HeaderItemContent data={[]} />
                                         </div>
                                     </li>
                                     <li className='HeaderComponent__Bottom__nav__container__List__Item'>

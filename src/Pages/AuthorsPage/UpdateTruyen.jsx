@@ -31,7 +31,6 @@ export const UpdateTruyen = () => {
         quoc_gia: yup.string(),
         isOver: yup.boolean(),
         truyen_thumbnail: yup.string(),
-        truyen_duyet: yup.string(),
     });
 
     // query
@@ -62,7 +61,7 @@ export const UpdateTruyen = () => {
                 theme: "light",
             });
 
-            navigate('/admin/quan-ly-truyen');
+            navigate('/author/dang-truyen');
 
         },
         onError: (error) => {
@@ -97,7 +96,7 @@ export const UpdateTruyen = () => {
     };
 
     return (
-        <div className='DefaultAdmin__right__Content'>
+        <div className='DefaultAuthors__right__Content'>
             <h2>Cập nhập truyện tranh </h2>
 
             <Formik
@@ -116,9 +115,9 @@ export const UpdateTruyen = () => {
                         }
                         formData.append('truyen_tacgia', values.truyen_tacgia);
                         formData.append('truyen_motangan', values.truyen_motangan);
-                        formData.append('truyen_duyet', values.truyen_duyet);
                         formData.append('quoc_gia', values.quoc_gia);
                         formData.append('isOver', values.isOver);
+
 
                         await mutationUpdateTruyen.mutateAsync({
                             token: user.token,
@@ -133,7 +132,6 @@ export const UpdateTruyen = () => {
                     truyen_tacgia: dataTruyen?.truyen_tacgia || '',
                     truyen_motangan: dataTruyen?.truyen_motangan || '',
                     truyen_thumbnail: dataTruyen?.truyen_hinhanhdaidien || '',
-                    truyen_duyet: dataTruyen?.truyen_duyet || '',
                     quoc_gia: dataTruyen?.quoc_gia || '',
                     isOver: dataTruyen?.isOver || false,
                     theloaiId: ''
@@ -199,20 +197,6 @@ export const UpdateTruyen = () => {
                                 <option value={'hanquoc'}>Hàn Quốc</option>
                                 <option value={'nhatban'}>Nhật Bản</option>
                                 <option value={'my'}>Mỹ</option>
-                            </Form.Control>
-                        </Form.Group>
-
-                        <Form.Group as={Col} md="9" controlId="formtruyen_duyet">
-                            <Form.Label>Trạng thái truyện:</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="truyen_duyet"
-                                value={values.truyen_duyet}
-                                onChange={handleChange}
-                            >
-                                <option value="">Chọn trạng thái</option>
-                                <option value={true}>Active</option>
-                                <option value={false}>Pending</option>
                             </Form.Control>
                         </Form.Group>
 

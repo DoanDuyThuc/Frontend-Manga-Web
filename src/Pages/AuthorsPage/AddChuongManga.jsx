@@ -175,7 +175,11 @@ export const AddChuongManga = () => {
                 ChuongId: chuong_id
             })
         }
+
     }
+
+    console.log(dataChuong);
+
 
     return (
         <>
@@ -188,7 +192,7 @@ export const AddChuongManga = () => {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
                     <h6 style={{ margin: '0' }}>Thêm thể loại cho truyện : </h6>
-                    <Button onClick={() => navigate(`/admin/add-theloai-truyen/${dataChuong.truyen_ma}/${dataChuong?.id}`)} variant="outline-dark">
+                    <Button onClick={() => navigate(`/author/add-theloai-truyen/${dataChuong.truyen_ma}/${dataChuong?.id}`)} variant="outline-dark">
                         <IoMdAdd />
                     </Button>
                 </div>

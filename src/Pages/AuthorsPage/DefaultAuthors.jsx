@@ -35,7 +35,7 @@ export const DefaultAuthors = ({ children }) => {
                                             '#4a4a4a' : 'none'
                                     }} to={'/author/dang-truyen'}>
                                         <IoIosCloudUpload />
-                                        <span>Đăng Truyện</span>
+                                        <span>Quản lý truyện của tác giả</span>
                                     </NavLink>
                                 </li>
                                 <li className='DefaultAuthors__left__list__item'>
@@ -44,7 +44,7 @@ export const DefaultAuthors = ({ children }) => {
                                             '#4a4a4a' : 'none'
                                     }} to={'/author/truyen-da-xuat-ban'}>
                                         <TbBrowserCheck />
-                                        <span>Truyện đã xuất bản</span>
+                                        <span>Phản hồi người đọc về truyện</span>
                                     </NavLink>
                                 </li>
                                 <li style={{

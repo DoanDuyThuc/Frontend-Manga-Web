@@ -79,14 +79,10 @@ export const UpdateTruyenService = async ({ token, data, truyen_ma }) => {
     }
 }
 
-export const GetChuongTruyenService = async ({ token, id }) => {
+export const GetChuongTruyenService = async ({ id, ChuongId }) => {
 
     try {
-        const response = await axiosInstance.get(`/truyen-tranh/get-chuong/${id}`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }, {
+        const response = await axiosInstance.get(`/truyen-tranh/get-chuong/${id}?ChuongId=${ChuongId}`, {}, {
             withCredentials: true,
         });
         return response.data;
@@ -193,14 +189,15 @@ export const UpdateSortImageChuongService = async ({ token, ChuongId, images }) 
     }
 }
 
-export const UpdateChuongService = async ({ token, id, Chuong_so, Chuong_ten, Chuong_noidung }) => {
+export const UpdateChuongService = async ({ token, id, Chuong_so, Chuong_ten, Chuong_noidung, TruyenId }) => {
 
     try {
         const response = await axiosInstance.patch(`/truyen-tranh/updateInfo-chuong/${id}`,
             {
                 Chuong_so,
                 Chuong_ten,
-                Chuong_noidung
+                Chuong_noidung,
+                TruyenId
             },
             {
                 headers: {
@@ -216,14 +213,10 @@ export const UpdateChuongService = async ({ token, id, Chuong_so, Chuong_ten, Ch
     }
 }
 
-export const GetAllTheLoaiService = async ({ token, page, limit, search }) => {
+export const GetAllTheLoaiService = async ({ page, limit, search }) => {
 
     try {
         const response = await axiosInstance.get(`/truyen-tranh/getAll-theloai?page=${page}&limit=${limit}&search=${search}`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }, {
             withCredentials: true,
         });
         return response.data;

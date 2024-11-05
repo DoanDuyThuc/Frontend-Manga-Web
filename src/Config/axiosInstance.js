@@ -16,7 +16,8 @@ const refreshAccessToken = async () => {
         });
         return response.data;
     } catch (error) {
-        return error.response.data;
+        console.error("Error refreshing access token:", error);
+        return null;
     }
 };
 
@@ -43,7 +44,7 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config;
 
         // Kiểm tra xem có phải lỗi 401 không
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true; // Đánh dấu yêu cầu đã được thử lại
             try {
                 const newAccessToken = await refreshAccessToken(); // Làm mới access token

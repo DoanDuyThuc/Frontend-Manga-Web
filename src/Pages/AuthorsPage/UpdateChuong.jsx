@@ -40,6 +40,9 @@ export const UpdateChuong = () => {
         refetchOnWindowFocus: false,
     })
 
+    console.log(data);
+
+
     const mutationUpdateChuong = useMutation({
         mutationFn: UpdateChuongService,
         onSuccess: (data) => {

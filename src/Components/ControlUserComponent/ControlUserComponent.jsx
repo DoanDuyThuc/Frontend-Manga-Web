@@ -128,7 +128,7 @@ export const ControlUserComponent = () => {
                         {/* authors */}
                         {user?.role === 'author' || user?.role === 'admin' ? (
                             <li className='popover-user__list__item'>
-                                <NavLink to='/author/truyen-da-xuat-ban'>Quản lý Truyện (dành cho tác giả)</NavLink>
+                                <NavLink to='/author/dang-truyen'>Quản lý Truyện (dành cho tác giả)</NavLink>
                             </li>
                         ) : ''}
                         <li className='popover-user__list__item'>

@@ -1,28 +1,29 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Image, Modal, Table } from 'react-bootstrap'
 import { IoIosSearch, IoMdAdd } from 'react-icons/io'
-import { PaginationComponent } from '../../Components/PanigateComponent/PanigateComponent'
-import { IoAddOutline } from "react-icons/io5";
-import { CiEdit } from 'react-icons/ci'
-import { MdDelete } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
-import { FaCaretDown, FaFilter } from 'react-icons/fa'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CreateTruyenService, DeleteTruyenService, GetAllTruyenService } from '../../services/TruyenService'
-import { useDispatch, useSelector } from 'react-redux'
-import { setPanigateTruyen, setTruyens } from '../../redux/admin/adminSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import * as formik from 'formik';
 import * as yup from 'yup';
-
+import { FaCaretDown, FaFilter } from 'react-icons/fa';
+import { IoAddOutline } from 'react-icons/io5';
+import { CiEdit } from 'react-icons/ci';
+import { MdDelete } from 'react-icons/md';
+import { GetTruyenForAuthorService } from '../../services/AuthorService';
+import { setAuthorPanigateTruyen, setAuthorTruyens } from '../../redux/author/authorSlice';
+import { PaginationComponent } from '../../Components/PanigateComponent/PanigateComponent';
 import thumbnailBase from '../../public/images/anh-thumbnail.jpg'
-import { toast } from 'react-toastify'
+import { CreateTruyenService, DeleteTruyenService } from '../../services/TruyenService';
+import { toast } from 'react-toastify';
+
 
 export const ManagerTruyen = () => {
-
     const navigate = useNavigate();
 
     const user = useSelector(state => state.user);
-    const admin = useSelector(state => state.admin);
+    const author = useSelector(state => state.author);
 
     const dispatch = useDispatch();
 
@@ -55,15 +56,33 @@ export const ManagerTruyen = () => {
 
     const [searchStatus, setSearchStatus] = useState('');
 
+    const { data } = useQuery({
+        queryKey: ['getAllTruyen-Author', { token: user.token, page: author?.truyenPanigate.page, limit: author?.limit, search: searchBtn, searchStatus: searchStatus }],
+        queryFn: async ({ queryKey }) => {
+            const [, { token, page, limit, search }] = queryKey;
+            const res = await GetTruyenForAuthorService({ token, page, limit, search, searchStatus });
+            return res;
+        },
+        enabled: !!user.token,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    })
 
-    const handleCloseCreateTruyen = () => {
-        setShowCreateTruyen(false);
-        setPreview(null);
-    };
-    const handleShowCreateTruyen = () => setShowCreateTruyen(true);
+    useEffect(() => {
+        if (data) {
+            dispatch(setAuthorTruyens(data));
+        }
+    }, [data, dispatch])
 
 
-    //mutations
+    useEffect(() => {
+        if (searchInput === '') {
+            setSearchBtn('');
+            dispatch(setAuthorPanigateTruyen(1));
+        }
+    }, [searchInput, dispatch])
+
+    //mutation
     const mutationCreateTruyen = useMutation({
         mutationFn: CreateTruyenService,
         onMutate: async (Data) => {
@@ -171,33 +190,14 @@ export const ManagerTruyen = () => {
         },
     })
 
-    // query 
-    const { data } = useQuery({
-        queryKey: ['getAllTruyen', { page: admin?.truyenPanigate.page, limit: admin?.limit, search: searchBtn, searchStatus }],
-        queryFn: async ({ queryKey }) => {
-            const [, { page, limit, search, searchStatus }] = queryKey;
-            const res = await GetAllTruyenService(page, limit, search, searchStatus);
-            return res;
-        },
-        enabled: !!admin.truyenPanigate.page && !!admin.limit,
-        keepPreviousData: true,
-        refetchOnWindowFocus: false,
-    })
 
-    useEffect(() => {
-        if (data) {
-            dispatch(setTruyens(data));
-        }
-    }, [data, dispatch])
+    const handleCloseCreateTruyen = () => {
+        setShowCreateTruyen(false);
+        setPreview(null);
+    };
+    const handleShowCreateTruyen = () => setShowCreateTruyen(true);
 
-    useEffect(() => {
-        if (searchInput === '') {
-            setSearchBtn('');
-            dispatch(setPanigateTruyen(1));
-        }
-    }, [searchInput, dispatch])
-
-    // logic handle
+    // logic handle file
     const handleFileChange = (e, setFieldValue) => {
 
         const file = e.target.files[0];
@@ -208,9 +208,21 @@ export const ManagerTruyen = () => {
         }
     };
 
+    //handle
+    const handleSearchInput = (e) => {
+        setSearchInput(e.target.value);
+    }
+
+    const handleKeyDownEnter = (e) => {
+        if (e.key === 'Enter') {
+            setSearchBtn(searchInput);
+            dispatch(setAuthorPanigateTruyen(1));
+        }
+    }
+
     const handleSelectAll = (e) => {
         if (e.target.checked) {
-            setSelectedTruyen(admin.truyens.map(truyen => truyen.id))
+            setSelectedTruyen(author?.truyens.Truyens.map(truyen => truyen.id))
         } else {
             setSelectedTruyen([]);
         }
@@ -229,7 +241,7 @@ export const ManagerTruyen = () => {
         if (isConfirmed) {
             await mutationDeleteTruyen.mutateAsync({ token: user.token, ids: selectedTruyen });
             setshowSelectedAction(false);
-            dispatch(setPanigateTruyen(1));
+            dispatch(setAuthorPanigateTruyen(1));
         }
 
     }
@@ -238,54 +250,45 @@ export const ManagerTruyen = () => {
         const isConfirmed = window.confirm("Bạn có chắc muốn xóa tất cả user đã chọn không?");
         if (isConfirmed) {
             await mutationDeleteTruyen.mutateAsync({ token: user.token, ids: [truyenId] });
-            dispatch(setPanigateTruyen(1));
+            dispatch(setAuthorPanigateTruyen(1));
         }
     }
 
-    const handleSearchInput = (e) => {
-        setSearchInput(e.target.value);
-    }
-
-    const handleKeyDownEnter = (e) => {
-        if (e.key === 'Enter') {
-            setSearchBtn(searchInput);
-            dispatch(setPanigateTruyen(1));
-        }
-    }
+    //panigate
 
     const handlePaginate = (pageNumber) => {
-        dispatch(setPanigateTruyen(pageNumber));
+        dispatch(setAuthorPanigateTruyen(pageNumber));
     };
 
     return (
         <>
-            <div className='DefaultAdmin__right__Content'>
-                <h2>Quản Lý Truyện Tranh</h2>
+            <div className='DefaultAuthors__right__Content'>
+                <h2>Đăng tác phẩm của bạn</h2>
+
                 <Button onClick={() => handleShowCreateTruyen()} variant="outline-dark" className='buttonAdd'>
                     <IoMdAdd />
                 </Button>
-
-                <div className='DefaultAdmin__right__Content__Search'>
+                <div className='DefaultAuthors__right__Content__Search'>
                     <input
                         onChange={(e) => handleSearchInput(e)}
                         onKeyDown={(e) => handleKeyDownEnter(e)}
                         type='text' placeholder='Tìm kiếm truyện tranh' />
                     <button onClick={() => {
                         setSearchBtn(searchInput);
-                        dispatch(setPanigateTruyen(1));
+                        dispatch(setAuthorPanigateTruyen(1));
 
                     }}>
                         <IoIosSearch />
                     </button>
 
-                    <div className='DefaultAdmin__right__Content__Search__status'>
+                    <div className='DefaultAuthors__right__Content__Search__status'>
                         <FaFilter />
                         <span>Lọc theo trạng thái</span>
 
                         <select
                             onChange={(e) => {
                                 setSearchStatus(e.target.value);
-                                dispatch(setPanigateTruyen(1));
+                                dispatch(setAuthorPanigateTruyen(1));
                             }}
                             defaultValue={''}
                         >
@@ -296,15 +299,15 @@ export const ManagerTruyen = () => {
                     </div>
                 </div>
 
-                <div className='DefaultAdmin__right__Content__Table'>
+                <div className='DefaultAuthors__right__Content__Table'>
                     <Table bordered hover variant="dark">
                         <thead>
                             <tr>
-                                <th className='DefaultAdmin__right__Content__Table__selected'>
+                                <th className='DefaultAuthors__right__Content__Table__selected'>
                                     <Form.Check
                                         type="checkbox"
                                         onChange={handleSelectAll}
-                                        checked={selectedTruyen.length === admin?.truyens.length}
+                                        checked={selectedTruyen.length === author?.truyens?.Truyens?.length}
                                     />
                                     <button
                                         onClick={() => setshowSelectedAction(!showSelectedAction)}
@@ -313,7 +316,7 @@ export const ManagerTruyen = () => {
                                     </button>
 
                                     {showSelectedAction && (
-                                        <div className='DefaultAdmin__right__Content__Table__selected__action'>
+                                        <div className='DefaultAuthors__right__Content__Table__selected__action'>
                                             <Button onClick={() => handleDeleteTruyenAll()} size='1rem' variant="danger">xóa</Button>
                                         </div>
                                     )}
@@ -328,7 +331,7 @@ export const ManagerTruyen = () => {
                         </thead>
                         <tbody>
 
-                            {admin?.truyens && admin?.truyens.map((Truyen, index) => (
+                            {author?.truyens?.Truyens && author?.truyens.Truyens.map((Truyen, index) => (
                                 <tr key={Truyen.id} >
                                     <td>
                                         <Form.Check
@@ -357,15 +360,15 @@ export const ManagerTruyen = () => {
 
                                         )}
                                     </td>
-                                    <td className='DefaultAdmin__right__Content__Table__action text-center'>
+                                    <td className='DefaultAuthors__right__Content__Table__action text-center'>
                                         <Button
-                                            onClick={() => navigate(`/admin/add-chuong-truyen/${Truyen.truyen_ma}`)}
+                                            onClick={() => navigate(`/author/add-chuong-truyen/${Truyen.truyen_ma}`)}
                                             variant="outline-warning"
                                         >
                                             <IoAddOutline />
                                         </Button>
                                         <Button
-                                            onClick={() => navigate(`/admin/update-truyen/${Truyen.truyen_ma}`)}
+                                            onClick={() => navigate(`/author/update-truyen/${Truyen.truyen_ma}`)}
                                             variant="outline-primary"
                                         >
                                             <CiEdit />
@@ -383,11 +386,11 @@ export const ManagerTruyen = () => {
                         </tbody>
                     </Table>
                     <PaginationComponent
-                        itemsPerPage={admin?.limit}
-                        totalItems={admin?.truyenPanigate.totalItems}
-                        totalPages={admin.truyenPanigate.totalPages}
+                        itemsPerPage={author?.limit}
+                        totalItems={author?.truyenPanigate.totalItems}
+                        totalPages={author.truyenPanigate.totalPages}
                         paginate={handlePaginate}
-                        currentPage={admin.truyenPanigate.page}
+                        currentPage={author.truyenPanigate.page}
                     />
                 </div>
             </div>

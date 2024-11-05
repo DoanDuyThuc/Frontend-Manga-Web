@@ -41,6 +41,13 @@
                 display: flex;
                 gap: 10px;
                 padding-top: 10px;
+
+                >li {
+                    >a {
+                        text-decoration: none;
+                        color: #000;
+                    }
+                }
             }
 
             &__Title {
@@ -214,4 +221,10 @@
         }
     }
 
+}
+
+.Isdisabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
 }

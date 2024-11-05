@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { MdOutlineWindPower } from "react-icons/md";
 import { GrPowerReset } from "react-icons/gr";
 import { ListSelecterFilterTypeManga } from '../../Config/ConfigListSelecter';
@@ -10,14 +10,81 @@ import { Form } from 'react-bootstrap';
 import * as formik from 'formik';
 import * as yup from 'yup';
 import { CartItemComponent } from '../../Components/CartItemComponent/CartItemComponent';
+import { useLocation, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetTruyenHomeService } from '../../services/HomeService';
+import { PaginationComponent } from '../../Components/PanigateComponent/PanigateComponent';
+import { setHomePanigateTruyen, setHomeTruyens } from '../../redux/home/homeSlice';
+import { GetAllTheLoaiService } from '../../services/TruyenService';
 
 export const ListMangaPage = () => {
+
+    const home = useSelector(state => state.home);
+    const dispatch = useDispatch();
+
+    const location = useLocation();
+    const searchTerm = new URLSearchParams(location.search).get('search');
+    const searchTheloai = new URLSearchParams(location.search).get('searchTheLoai');
+
+    const [quocGia, setQuocGia] = useState('');
+    const [tinhTrang, setTinhTrang] = useState('');
+    const [typeManga, setTypeManga] = useState([]);
+
+    const { data } = useQuery({
+        queryKey: ['getAllTruyen-Home', {
+            page: home?.truyenPanigate.page,
+            limit: home?.limit,
+            search: searchTerm === null ? '' : searchTerm,
+            quoc_gia: quocGia === '' ? '' : quocGia,
+            isOver: tinhTrang === '' ? '' : tinhTrang,
+            typeManga: typeManga.length === 0 ? '' : typeManga,
+        }],
+        queryFn: async ({ queryKey }) => {
+            const [, { page, limit, search, quoc_gia, isOver, typeManga }] = queryKey;
+            const res = await GetTruyenHomeService({ page, limit, search, quoc_gia, isOver, typeManga });
+            return res;
+        },
+        enabled: !!home?.truyenPanigate.page || !!home?.limit || !!searchTerm || !!quocGia || !!tinhTrang,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    })
+
+
+    const Theloais = useQuery({
+        queryKey: ['GetAllTheLoai', { page: '', limit: '', search: '' }],
+        queryFn: async ({ queryKey }) => {
+            const [, { page, limit, search }] = queryKey;
+            const response = await GetAllTheLoaiService({ page, limit, search });
+            return response;
+        },
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
+
+    useEffect(() => {
+        if (data) {
+            dispatch(setHomeTruyens(data))
+            window.scrollTo(0, 0);
+
+            if (searchTheloai) {
+
+                setTypeManga([Number(searchTheloai)]);
+            }
+        }
+    }, [data, dispatch, searchTheloai])
+
 
     const { Formik } = formik;
 
     const schema = yup.object().shape({
 
     });
+
+    //handle 
+    const handlePaginate = (pageNumber) => {
+        dispatch(setHomePanigateTruyen(pageNumber));
+    };
 
     return (
         <div className='ListMangaPage'>
@@ -38,7 +105,7 @@ export const ListMangaPage = () => {
                         </div>
 
                         <div className='ListMangaPage__main__Filter__searchForm__reset'>
-                            <a href="/guest/truyen-moi-cap-nhat/1">
+                            <a href="/guest/truyen-moi-cap-nhat">
                                 <GrPowerReset />
                                 <span>Reset</span>
                             </a>
@@ -47,14 +114,15 @@ export const ListMangaPage = () => {
                         <Formik
                             validationSchema={schema}
                             onSubmit={(values) => {
-                                console.log(values);
+                                setQuocGia(values.QuocGia);
+                                setTinhTrang(values.TinhTrang);
+                                setTypeManga(values.TypeManga);
                             }}
 
                             initialValues={{
                                 TypeManga: [],
                                 QuocGia: '',
                                 TinhTrang: '',
-                                SoLuongChuong: 0,
                             }}
                         >
                             {({ handleSubmit, setFieldValue, handleChange, values, touched, errors }) => (
@@ -67,27 +135,29 @@ export const ListMangaPage = () => {
                                         <Container fluid>
                                             <Row>
                                                 {
-                                                    ListSelecterFilterTypeManga.map((item, index) => {
+                                                    Theloais?.data?.data.map((item, index) => {
                                                         return (
                                                             <Col lg={4} key={index}>
                                                                 <Form.Group as={Col} lg="4" controlId="validationFormik01">
                                                                     <Form.Check
                                                                         inline
-                                                                        label={item.lable}
+                                                                        label={item.ten_theloai}
                                                                         name="TypeManga"
                                                                         type="checkbox"
-                                                                        id={`inline-checkbox-${item.value}`}
-                                                                        value={item.value} // Giá trị của checkbox này
+                                                                        id={`inline-checkbox-${item.id}`}
+                                                                        value={item.id} // Giá trị của checkbox này
                                                                         onChange={(e) => {
                                                                             if (e.target.checked) {
                                                                                 // Thêm giá trị vào mảng
-                                                                                setFieldValue('TypeManga', [...values.TypeManga, e.target.value]);
+                                                                                setFieldValue('TypeManga', [...values.TypeManga, Number(e.target.value)]);
+
                                                                             } else {
                                                                                 // Xóa giá trị khỏi mảng
-                                                                                setFieldValue('TypeManga', values.TypeManga.filter(item => item !== e.target.value));
+                                                                                setFieldValue('TypeManga', values.TypeManga.filter(item => item !== Number(e.target.value)));
                                                                             }
+
                                                                         }}
-                                                                        checked={values.TypeManga.includes(item.value)}
+                                                                        checked={values.TypeManga.includes(item.id)}
                                                                     />
                                                                 </Form.Group>
                                                             </Col>
@@ -125,34 +195,12 @@ export const ListMangaPage = () => {
                                                 onChange={handleChange}
                                             >
                                                 <option value=''>Tất cả</option>
-                                                <option value="dahoanthanh">Đã Hoàn Thành</option>
-                                                <option value="chuahoanthanh">Chưa Hoàn Thành</option>
+                                                <option value={true}>Đã Hoàn Thành</option>
+                                                <option value={false}>Chưa Hoàn Thành</option>
                                             </Form.Select>
                                         </Form.Group>
                                     </div>
 
-                                    <div className='ListMangaPage__main__Filter__searchForm__InfoManga'>
-                                        <Form.Group className='ListMangaPage__main__Filter__searchForm__InfoManga__Item' controlId="validationFormik01">
-                                            <Form.Label>Số Lượng Chương</Form.Label>
-                                            <Form.Select
-                                                name='SoLuongChuong'
-                                                aria-label="Select Info Manga"
-                                                value={values.SoLuongChuong}
-                                                onChange={handleChange}
-                                            >
-                                                <option value={0}>{'>'} 0</option>
-                                                <option value={50}>{'>='} 50</option>
-                                                <option value={100}>{'>='} 100</option>
-                                                <option value={200}>{'>='} 200</option>
-                                                <option value={300}>{'>='} 300</option>
-                                                <option value={400}>{'>='} 400</option>
-                                                <option value={500}>{'>='} 500</option>
-                                            </Form.Select>
-                                        </Form.Group>
-                                        <div className='ListMangaPage__main__Filter__searchForm__InfoManga__Item'>
-
-                                        </div>
-                                    </div>
                                     <div className='ListMangaPage__main__Filter__searchForm__Submit'>
                                         <button type='submit'>Tìm Kiếm</button>
                                     </div>
@@ -165,62 +213,23 @@ export const ListMangaPage = () => {
                 <div className='ListMangaPage__main__ListMangaPageGrid'>
                     <Container fluid>
                         <Row>
-                            <Col lg={2} md={3} sm={4} xs={6}>
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
-                            <Col lg={2} md={3} sm={4} xs={6}>
-
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
-                            <Col lg={2} md={3} sm={4} xs={6}>
-
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
-                            <Col lg={2} md={3} sm={4} xs={6}>
-
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
-                            <Col lg={2} md={3} sm={4} xs={6}>
-
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
-                            <Col lg={2} md={3} sm={4} xs={6}>
-
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
-                            <Col lg={2} md={3} sm={4} xs={6}>
-
-                                <CartItemComponent marginZero={true} />
-                            </Col>
-
+                            {home?.truyens.map((item, index) => (
+                                <Col key={index} lg={2} md={3} sm={4} xs={6}>
+                                    <CartItemComponent item={item} marginZero={true} deleted={false} />
+                                </Col>
+                            ))}
                         </Row>
                     </Container>
                 </div>
 
                 <div className='ListMangaPage__main__Panigate'>
-                    <Pagination>
-                        <Pagination.First />
-                        <Pagination.Prev />
-                        <Pagination.Item active>{1}</Pagination.Item>
-                        <Pagination.Ellipsis />
-
-                        <Pagination.Item>{10}</Pagination.Item>
-                        <Pagination.Item>{11}</Pagination.Item>
-                        <Pagination.Item >{12}</Pagination.Item>
-                        <Pagination.Item>{13}</Pagination.Item>
-                        <Pagination.Item disabled>{14}</Pagination.Item>
-
-                        <Pagination.Ellipsis />
-                        <Pagination.Item>{20}</Pagination.Item>
-                        <Pagination.Next />
-                        <Pagination.Last />
-                    </Pagination>
+                    <PaginationComponent
+                        itemsPerPage={home?.limit}
+                        totalItems={home?.truyenPanigate.totalItems}
+                        totalPages={home.truyenPanigate.totalPages}
+                        paginate={handlePaginate}
+                        currentPage={home.truyenPanigate.page}
+                    />
                 </div>
             </div>
         </div>

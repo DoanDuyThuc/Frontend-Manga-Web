@@ -8,17 +8,17 @@ import { DetailChapterPage } from '../Pages/DetailChapterPage/DetailChapterPage'
 const guestsRouter =
     [
         {
-            path: '/truyen-moi-cap-nhat/:id',
+            path: '/truyen-moi-cap-nhat',
             page: ListMangaPage,
             isHeaderFooter: true,
         },
         {
-            path: '/truyen-tranh/:slug',
+            path: '/truyen-tranh/:truyen_ma',
             page: DetailMangaPage,
             isHeaderFooter: true,
         },
         {
-            path: '/truyen-tranh/:slug/:id',
+            path: '/truyen-tranh/:truyen_ma/:TruyenId/:ChuongId',
             page: DetailChapterPage,
             isHeaderFooter: true,
         },

@@ -69,13 +69,13 @@ export const ManagerTheLoai = () => {
     const [searchBtn, setSearchBtn] = useState('');
 
     const { data } = useQuery({
-        queryKey: ['GetAllTheLoai', { token: user.token, page: admin.theloaiPanigate.page, limit: admin.limit, search: searchBtn }],
+        queryKey: ['GetAllTheLoai', { page: admin.theloaiPanigate.page, limit: admin.limit, search: searchBtn }],
         queryFn: async ({ queryKey }) => {
-            const [, { token, page, limit, search }] = queryKey;
-            const response = await GetAllTheLoaiService({ token, page, limit, search });
+            const [, { page, limit, search }] = queryKey;
+            const response = await GetAllTheLoaiService({ page, limit, search });
             return response;
         },
-        enabled: !!user.token && !!admin.theloaiPanigate.page && !!admin.limit,
+        enabled: !!admin.theloaiPanigate.page && !!admin.limit,
         keepPreviousData: true,
         refetchOnWindowFocus: false,
     });

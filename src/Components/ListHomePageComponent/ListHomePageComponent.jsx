@@ -7,7 +7,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { CartItemComponent } from '../CartItemComponent/CartItemComponent';
 import { NavLink } from 'react-router-dom';
 
-export const ListHomePageComponent = () => {
+export const ListHomePageComponent = ({ dataTruyens }) => {
     return (
         <Container fluid className='ListHomePage'>
             <div className='ListHomePage__ListHomePageTags'>
@@ -28,45 +28,19 @@ export const ListHomePageComponent = () => {
             </div>
             <div className='ListHomePage__ListHomePageGrid'>
                 <Row>
-                    <Col lg={2} md={3} sm={4} xs={6}>
-                        <CartItemComponent marginZero={true} />
-                    </Col>
 
-                    <Col lg={2} md={3} sm={4} xs={6}>
+                    {dataTruyens.map((item, index) => (
+                        <Col key={item.id} lg={2} md={3} sm={4} xs={6}>
+                            <CartItemComponent item={item} marginZero={true} deleted={false} />
+                        </Col>
 
-                        <CartItemComponent marginZero={true} />
-                    </Col>
-
-                    <Col lg={2} md={3} sm={4} xs={6}>
-
-                        <CartItemComponent marginZero={true} />
-                    </Col>
-
-                    <Col lg={2} md={3} sm={4} xs={6}>
-
-                        <CartItemComponent marginZero={true} />
-                    </Col>
-
-                    <Col lg={2} md={3} sm={4} xs={6}>
-
-                        <CartItemComponent marginZero={true} />
-                    </Col>
-
-                    <Col lg={2} md={3} sm={4} xs={6}>
-
-                        <CartItemComponent marginZero={true} />
-                    </Col>
-
-                    <Col lg={2} md={3} sm={4} xs={6}>
-
-                        <CartItemComponent marginZero={true} />
-                    </Col>
+                    ))}
 
                 </Row>
             </div>
 
             <div className='ListHomePage__ListHomePageSeeMore'>
-                <NavLink to='/guest/truyen-moi-cap-nhat/1'>Xem thêm nhiều truyện</NavLink>
+                <NavLink to='/guest/truyen-moi-cap-nhat'>Xem thêm nhiều truyện</NavLink>
             </div>
         </Container>
     )
