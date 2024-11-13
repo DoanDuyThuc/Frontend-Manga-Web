@@ -5,6 +5,12 @@
     align-items: center;
     gap: 15px;
 
+    &__bell {
+        cursor: pointer;
+        position: relative;
+        margin-right: 5px;
+    }
+
     &__UserName {}
 
     &__Manager {
@@ -39,6 +45,89 @@
                 color: $primary-color !important;
             }
 
+        }
+    }
+}
+
+
+.ModalThongBao {
+    width: 100%;
+    border-radius: 5px;
+    max-height: 500px;
+    overflow: auto;
+    min-height: 300px;
+    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+    color: #4a4a4a;
+    display: block;
+    padding: 1.25rem 0;
+    font-weight: 400;
+    font-size: 15px;
+
+    &__content {
+        overflow: hidden;
+
+        &__list {
+            margin: 10px 0 0 0;
+            padding: 0;
+
+            :hover {
+                color: $primary-color !important;
+            }
+
+            &__item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 20px;
+                height: 100px;
+
+                border-bottom: 1px solid #e0e0e0;
+                cursor: pointer;
+
+                &__holdLeftMid {
+                    display: flex;
+                    align-items: center;
+
+                    &__left {
+                        display: flex;
+                        align-items: start;
+                        flex-direction: column;
+
+                    }
+
+                    &__mid {
+                        display: flex;
+                        justify-content: center;
+                        flex-direction: column;
+                        margin: 0 10px;
+
+                        &__text {
+                            font-size: 0.9rem;
+                            display: inline-block;
+                            max-width: 335px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+
+                }
+
+
+                &__right {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    z-index: 111;
+
+                    >span {
+                        cursor: pointer;
+                    }
+                }
+
+
+            }
         }
     }
 }

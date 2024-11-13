@@ -113,19 +113,16 @@ export const HeaderBottom = ({ isDarkMode }) => {
                                         </div>
                                     </li>
                                     <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                        <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Tìm Truyện</NavLink>
+                                        <NavLink to="/guest/truyen-moi-cap-nhat" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Tìm Truyện</NavLink>
                                     </li>
                                     <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                        <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Lịch Sử</NavLink>
+                                        <NavLink to="/user/lich-su" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Lịch Sử</NavLink>
                                     </li>
                                     <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                        <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Theo Dõi</NavLink>
+                                        <NavLink to="/user/truyen-dang-theo-doi" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Theo Dõi</NavLink>
                                     </li>
                                     <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                        <NavLink to="/the-loai" className='HeaderComponent__Bottom__nav__container__List__Item__Top'>Thảo Luận</NavLink>
-                                    </li>
-                                    <li className='HeaderComponent__Bottom__nav__container__List__Item'>
-                                        <a className='HeaderComponent__Bottom__nav__container__List__Item__Top' href='/' >Fanpage</a>
+                                        <a className='HeaderComponent__Bottom__nav__container__List__Item__Top' href='https://www.facebook.com/profile.php?id=61566114167887&ref=embed_page' >Fanpage</a>
                                     </li>
                                     <li className='Button__User'>
                                         <ControlUserComponent />

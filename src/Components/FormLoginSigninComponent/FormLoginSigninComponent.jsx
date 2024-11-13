@@ -10,7 +10,7 @@ import { setUserId } from "../../redux/user/userSlice";
 import './FormLoginSigninComponent.scss'
 import { Col } from 'react-bootstrap';
 import { FaFacebookF, FaGoogle } from 'react-icons/fa';
-import { LoginInService, SignInService } from '../../services/UserService';
+import { ForgotPasswordService, LoginInService, SignInService } from '../../services/UserService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const FormLoginSigninComponent = ({ setisFormNow, isFormNow, setShowForm }) => {
@@ -74,6 +74,47 @@ export const FormLoginSigninComponent = ({ setisFormNow, isFormNow, setShowForm 
         },
     });
 
+    const mutationForgotPassword = useMutation({
+        mutationFn: ForgotPasswordService,
+        onSuccess: (data) => {
+            if (!data.error) {
+                toast.success(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.error(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    });
+
     return (
 
         <div className='LoginFormComponent'>
@@ -105,7 +146,8 @@ export const FormLoginSigninComponent = ({ setisFormNow, isFormNow, setShowForm 
                             }
                         } else if (isFormNow === 'dangnhap') {
                             await mutation.mutateAsync({ email: values.email, password: values.password });
-
+                        } else {
+                            await mutationForgotPassword.mutateAsync({ email: values.email });
                         }
                     }
                 }
@@ -145,18 +187,20 @@ export const FormLoginSigninComponent = ({ setisFormNow, isFormNow, setShowForm 
                             />
                             <formik.ErrorMessage style={{ marginTop: '10px', color: 'red' }} name="email" component="div" />
                         </Form.Group>
-                        <Form.Group as={Col} md="12" controlId="validationPassword">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                name="password"
-                                placeholder='nhập Password'
-                                value={values.password}
-                                onChange={handleChange}
-                                isValid={touched.password && !errors.password}
-                            />
-                            <formik.ErrorMessage style={{ marginTop: '10px', color: 'red' }} name="password" component="div" />
-                        </Form.Group>
+                        {isFormNow === 'dangnhap' || isFormNow === 'dangky' ? (
+                            <Form.Group as={Col} md="12" controlId="validationPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    name="password"
+                                    placeholder='nhập Password'
+                                    value={values.password}
+                                    onChange={handleChange}
+                                    isValid={touched.password && !errors.password}
+                                />
+                                <formik.ErrorMessage style={{ marginTop: '10px', color: 'red' }} name="password" component="div" />
+                            </Form.Group>
+                        ) : ''}
                         <div className='LoginFormComponent__Form__navigate'>
                             <p>
                                 {isFormNow === 'dangky' ? (
@@ -177,9 +221,10 @@ export const FormLoginSigninComponent = ({ setisFormNow, isFormNow, setShowForm 
                         <div className='LoginFormComponent__Form__submit'>
                             <button type="submit">{isFormNow === 'dangnhap' ? (
                                 'Đăng Nhập'
-                            ) : (
+                            ) : isFormNow === 'dangky' ? (
                                 'Đăng Ký'
-                            )}</button>
+                            ) : 'Quên Mật Khẩu'
+                            }</button>
                         </div>
 
                         <div className='LoginFormComponent__Form__social'>

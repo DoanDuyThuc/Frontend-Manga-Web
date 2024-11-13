@@ -9,7 +9,7 @@ import { FormLoginSigninComponent } from '../FormLoginSigninComponent/FormLoginS
 import { ButtonLoginSignin } from '../ButtonLoginSignin/ButtonLoginSignin';
 import { ControlUserComponent } from '../ControlUserComponent/ControlUserComponent';
 import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 export const HeaderTop = () => {
 
@@ -49,9 +49,9 @@ export const HeaderTop = () => {
             <div className='HeaderComponent__Top'>
                 <div className='HeaderComponent__Top__middle'>
                     <div className='HeaderComponent__Top__middle__Left'>
-                        <a href='/' className='HeaderComponent__Top__middle__Left__logo'>
+                        <NavLink to={'/'} className='HeaderComponent__Top__middle__Left__logo'>
                             <img loading='lazy' src={Logo1} alt='logo' />
-                        </a>
+                        </NavLink>
 
                         <div className='HeaderComponent__Top__middle__Left__Search' >
                             <input

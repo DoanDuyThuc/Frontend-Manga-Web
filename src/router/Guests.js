@@ -4,6 +4,7 @@ import { DefaultComponent } from '../Components/DefaultComponent/DefaultComponen
 import { ListMangaPage } from '../Pages/ListMangaPage/ListMangaPage'
 import { DetailMangaPage } from '../Pages/DetailMangaPage/DetailMangaPage'
 import { DetailChapterPage } from '../Pages/DetailChapterPage/DetailChapterPage'
+import { ResetPassWordPage } from '../Pages/ResetPassWordPage/ResetPassWordPage'
 
 const guestsRouter =
     [
@@ -20,6 +21,12 @@ const guestsRouter =
         {
             path: '/truyen-tranh/:truyen_ma/:TruyenId/:ChuongId',
             page: DetailChapterPage,
+            isHeaderFooter: true,
+        },
+
+        {
+            path: '/reset-password',
+            page: ResetPassWordPage,
             isHeaderFooter: true,
         },
     ]

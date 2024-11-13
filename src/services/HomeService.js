@@ -147,3 +147,161 @@ export const UpdateLuotXemService = async ({ truyen_id }) => {
         return error.response.data;
     }
 }
+
+export const CreateCommentService = async ({ token, user_id, truyen_id, content }) => {
+
+    try {
+        const response = await axiosInstance.post(`/home/createComment`, { user_id, truyen_id, content },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            },
+            {
+                withCredentials: true,
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const GetAllCommentService = async ({ truyenId }) => {
+
+    try {
+        const response = await axiosInstance.get(`/home/getAllComment?truyen_id=${truyenId}`, {},
+            {
+                withCredentials: true,
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const CreateRepCommentService = async ({ token, user_id, comment_id, content }) => {
+
+    try {
+        const response = await axiosInstance.post(`/home/createRepComment`, { user_id, comment_id, content },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            },
+            {
+                withCredentials: true,
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const DeleteCommentService = async ({ token, comment_id }) => {
+
+    try {
+        const response = await axiosInstance.delete(`/home/deleteComment?comment_id=${comment_id}`, {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            },
+            {
+                withCredentials: true,
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const GetAllCommentOfUserService = async ({ token, userId }) => {
+
+    try {
+        const response = await axiosInstance.get(`/home/getAllCommentOfUser?user_id=${userId}`, {},
+            {
+                withCredentials: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+
+export const UpdateStatusCommentOfUserService = async ({ token, comment_id, IsRead, IsShow }) => {
+
+    try {
+        const response = await axiosInstance.patch(`/home/updateStatusCommentOfUser`, { comment_id, IsRead, IsShow },
+            {
+                withCredentials: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const UpdateCommentOfUserService = async ({ token, comment_id, content }) => {
+
+    try {
+        const response = await axiosInstance.patch(`/home/updateComment`, { comment_id, content },
+            {
+                withCredentials: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const DeleteRepCommentOfUserService = async ({ token, repcomment_id }) => {
+
+    try {
+        const response = await axiosInstance.delete(`/home/deleteRepComment?repcomment_id=${repcomment_id}`, {},
+            {
+                withCredentials: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const UpdateRepCommentService = async ({ token, repcomment_id, content }) => {
+
+    try {
+        const response = await axiosInstance.patch(`/home/updateRepComment`, { repcomment_id, content },
+            {
+                withCredentials: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}

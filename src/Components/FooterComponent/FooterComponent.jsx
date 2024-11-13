@@ -1,9 +1,31 @@
 import React, { useEffect } from 'react'
 import './FooterComponent.scss'
 import Logo from '../../public/images/logo1.png'
-import { Col, Container, NavLink, Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
+import { useQuery } from '@tanstack/react-query'
+import { GetAllTheLoaiService } from '../../services/TruyenService'
+import { NavLink } from 'react-router-dom'
 
 export const FooterComponent = () => {
+
+    const [dataTheloais, setDataTheloais] = React.useState([]);
+
+    const Theloais = useQuery({
+        queryKey: ['GetAllTheLoai', { page: '', limit: '', search: '' }],
+        queryFn: async ({ queryKey }) => {
+            const [, { page, limit, search }] = queryKey;
+            const response = await GetAllTheLoaiService({ page, limit, search });
+            return response;
+        },
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
+
+    useEffect(() => {
+        if (Theloais?.data) {
+            setDataTheloais(Theloais?.data?.data)
+        }
+    }, [Theloais]);
 
     return (
         <Container fluid className='FooterComponent'>
@@ -29,30 +51,13 @@ export const FooterComponent = () => {
 
                     <Col lg={6} className='FooterComponent__middle__right'>
                         <ul className='FooterComponent__middle__right__List'>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Truyện Tranh</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Truyện Tranh Online</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Truyện Tranh Mới</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Truyện Tranh Hay</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Manhwa</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Manhua</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Manga</NavLink>
-                            </li>
-                            <li className='FooterComponent__middle__right__List__Item'>
-                                <NavLink to='/'>Truyện Ngôn Tình</NavLink>
-                            </li>
+                            {dataTheloais && dataTheloais.map((item, index) => (
+                                <li key={item.id} className='FooterComponent__middle__right__List__Item'>
+                                    <NavLink to={`/guest/truyen-moi-cap-nhat?searchTheLoai=${item.id}`}>
+                                        {item.ten_theloai}
+                                    </NavLink>
+                                </li>
+                            ))}
                         </ul>
 
                         <p>

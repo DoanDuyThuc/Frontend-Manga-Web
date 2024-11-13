@@ -32,7 +32,6 @@ export const DetailMangaPage = () => {
     const [isShowMore, setIsShowMore] = useState(false);
     const [dataTruyen, setDataTruyen] = useState([]);
     const { truyen_ma } = useParams();
-    const { pathname } = useLocation();
     const user = useSelector(state => state.user);
 
     //query
@@ -121,7 +120,7 @@ export const DetailMangaPage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [pathname]);
+    }, [location.pathname]);
 
     useEffect(() => {
         if (data) {
@@ -136,10 +135,10 @@ export const DetailMangaPage = () => {
         }
     }, [location.pathname, dataTruyen]);
 
+
     const handleUpdateLuotXem = async () => {
         await mutationUpdateLuotXem.mutateAsync({ truyen_id: dataTruyen?.id });
     }
-
 
     //handle
     const handleFollowTruyen = async () => {
@@ -165,7 +164,6 @@ export const DetailMangaPage = () => {
     const handleIsShowMore = () => {
         setIsShowMore(!isShowMore);
     }
-
 
     return (
         <div className='DetailMangaPage'>
@@ -369,7 +367,9 @@ export const DetailMangaPage = () => {
                 </div>
 
 
-                <CommentComponent />
+                <div>
+                    <CommentComponent truyenId={dataTruyen.id} />
+                </div>
             </div>
         </div >
     )

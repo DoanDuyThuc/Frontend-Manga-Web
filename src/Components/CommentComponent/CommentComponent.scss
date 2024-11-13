@@ -89,5 +89,68 @@
                  }
              }
          }
+
+         &__contentRep {
+             display: flex;
+             align-items: center;
+             gap: 10px;
+             margin-left: 50px;
+             margin-top: 10px;
+
+             &__comment {
+                 background: #f7f7f7;
+                 padding: 10px;
+                 border-radius: 10px;
+                 width: 70%;
+             }
+         }
+
+         &__content2 {
+             text-align: right;
+
+             >span {
+                 color: #209cee;
+                 border-radius: 3px;
+                 display: inline-block;
+                 margin: 6px;
+                 font-size: 15px;
+                 border: none;
+                 cursor: pointer;
+
+                 &:hover {
+                     color: #1a8ac2;
+                 }
+             }
+         }
+     }
+ }
+
+
+ .RepComment {
+     display: flex;
+     flex-direction: column;
+     align-items: end;
+     margin-top: 10px;
+
+     &__message {
+         width: 70%;
+     }
+
+     &__button {
+         text-align: end;
+
+         >button {
+             background-color: #209cee;
+             color: #fff;
+             border-radius: 3px;
+             padding: 6px;
+             min-width: 125px;
+             font-size: 15px;
+             border: none;
+
+             &:hover {
+                 background-color: #1a8ac2;
+             }
+         }
      }
  }

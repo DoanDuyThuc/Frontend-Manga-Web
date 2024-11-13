@@ -12,14 +12,14 @@ export const ListHomePageComponent = ({ dataTruyens }) => {
         <Container fluid className='ListHomePage'>
             <div className='ListHomePage__ListHomePageTags'>
                 <h1>
-                    <NavLink to='/tags'>
+                    <NavLink to='/guest/truyen-moi-cap-nhat'>
                         <MdOutlineWindPower />
                         <p style={{ margin: 0 }}>Truyện Mới Cập Nhật</p>
                     </NavLink>
                 </h1>
 
                 <div className='ListHomePage__ListHomePageTags__Sort'>
-                    <NavLink to='/tags'>
+                    <NavLink to='/guest/truyen-moi-cap-nhat'>
                         <button>
                             <FaFilter />
                         </button>

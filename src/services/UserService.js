@@ -148,3 +148,33 @@ export const UpdateInfoUserService = async ({ token, id, username, email, role, 
         return error.response.data;
     }
 }
+
+export const ForgotPasswordService = async ({ email }) => {
+
+    try {
+        const response = await axiosInstance.post(`/user/forgot-password`, { email },
+            {
+                withCredentials: true,
+            });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+
+export const ResetPasswordService = async ({ token, password }) => {
+
+    try {
+        const response = await axiosInstance.post(`/user/resetPassword`, { password }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
