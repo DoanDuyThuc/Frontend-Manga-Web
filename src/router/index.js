@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { Guests } from './Guests'
 import { Users } from './Users'
 import { Authors } from './Authors'
@@ -14,8 +14,7 @@ const Routers = () => {
     const Layout = DefaultComponent
 
     return (
-        <Routes>
-
+        <Routes >
             {/* home */}
             <Route path='/' element={
                 <Layout>

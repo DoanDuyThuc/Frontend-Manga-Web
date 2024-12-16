@@ -1,7 +1,7 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import { GetInfoUpdateService, UpdateInfoUserService } from '../../services/UserService';
+import { AddThongBaoForUserService, GetInfoUpdateService, UpdateInfoUserService } from '../../services/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Form from 'react-bootstrap/Form';
@@ -17,6 +17,8 @@ export const UpdateUser = () => {
     const navigate = useNavigate();
 
     const { id } = useParams();
+
+    const queryClient = useQueryClient();
 
     const { Formik } = formik;
 
@@ -58,8 +60,48 @@ export const UpdateUser = () => {
                 theme: "light",
             });
 
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${data?.message}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+    })
+
+    const mutationAddThongBaoActive = useMutation({
+        mutationFn: AddThongBaoForUserService,
+        onMutate: async (Data) => {
+            await queryClient.cancelQueries('getAllUser');
+            const previousValue = queryClient.getQueryData('getAllUser');
+            queryClient.setQueryData('getAllUser', (old) => {
+                return old;
+            });
+            return previousValue;
+        },
+        onSuccess: (data) => {
+            toast.success(`🐉 ${data?.message}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
             navigate('/admin/quan-ly-tai-khoan');
 
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('getAllUser');
         },
         onError: (error) => {
             toast.error(`🐉 ${data?.message}`, {
@@ -81,6 +123,9 @@ export const UpdateUser = () => {
         }
     }, [data]);
 
+    console.log(dataInfo);
+
+
     return (
         <div className='DefaultAdmin__right__Content'>
             <h2>Cập nhập thông tin user </h2>
@@ -91,6 +136,15 @@ export const UpdateUser = () => {
                 onSubmit={
                     async (values) => {
                         await mutationUpdateUser.mutateAsync({ token: user.token, id, ...values });
+
+                        if (values.role === 'author') {
+                            await mutationAddThongBaoActive.mutateAsync({
+                                token: user.token,
+                                idUser: dataInfo.id,
+                                content: `Chúc mừng tài khoản ${dataInfo.email} đã trở thành tác giả trên trang web của chúng tôi.`,
+                            })
+                        }
+
                     }
                 }
                 initialValues={{

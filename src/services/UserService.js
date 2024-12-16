@@ -178,3 +178,51 @@ export const ResetPasswordService = async ({ token, password }) => {
         return error.response.data;
     }
 }
+
+export const AddThongBaoForUserService = async ({ token, content, idUser }) => {
+
+    try {
+        const response = await axiosInstance.post(`/user/addThongBaoForUser`, { content, idUser }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const GetThongBaoForUserService = async ({ token }) => {
+
+    try {
+        const response = await axiosInstance.get(`/user/getThongBaoForUser`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const DeleteThongBaoForUserService = async ({ token, id }) => {
+
+    try {
+        const response = await axiosInstance.delete(`/user/deleteThongBaoForUser?id=${id}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}

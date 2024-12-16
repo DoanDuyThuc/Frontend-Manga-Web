@@ -1,6 +1,7 @@
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import { FaKey, FaUserCircle } from 'react-icons/fa'
+import { SiAuth0 } from "react-icons/si";
 import { NavLink, useLocation } from 'react-router-dom'
 
 export const DefaultSettingInfor = ({ children }) => {
@@ -30,6 +31,16 @@ export const DefaultSettingInfor = ({ children }) => {
                                 }} to='/user/doi-mat-khau'>
                                     <FaKey />
                                     <span>Đổi Mật Khẩu</span>
+                                </NavLink>
+                            </li>
+
+                            <li className='ListInforMemberPage__main__navUser__item'>
+                                <NavLink style={{
+                                    color: location.pathname === '/user/dang-ky-tac-gia' ?
+                                        '#f18121' : '#000'
+                                }} to='/user/dang-ky-tac-gia'>
+                                    <SiAuth0 />
+                                    <span>Đăng ký thành tác giả</span>
                                 </NavLink>
                             </li>
                         </div>

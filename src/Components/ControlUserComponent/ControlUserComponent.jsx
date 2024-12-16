@@ -7,7 +7,7 @@ import './ControlUserComponent.scss'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { LogoutService } from '../../services/UserService'
+import { DeleteThongBaoForUserService, GetThongBaoForUserService, LogoutService } from '../../services/UserService'
 import { toast } from 'react-toastify'
 import { clearUser } from '../../redux/user/userSlice'
 import { FaBell } from 'react-icons/fa'
@@ -29,6 +29,7 @@ export const ControlUserComponent = () => {
 
     const [showThongBao, setShowThongBao] = useState(false);
     const [dataCommentOfUser, setDataCommentOfUser] = useState([]);
+    const [dataThongBaoToAdmins, setDataThongBaoToAdmins] = useState([]);
 
     const handleCloseThongBao = () => setShowThongBao(false);
 
@@ -36,11 +37,23 @@ export const ControlUserComponent = () => {
     const user = useSelector(state => state?.user);
 
     //query
-    const { data } = useQuery({
+    const { data: comments } = useQuery({
         queryKey: ['Get-CommentOfUser', user.token, user.userId],
         queryFn: async ({ queryKey }) => {
             const [, token, userId] = queryKey;
             const res = await GetAllCommentOfUserService({ token, userId });
+            return res;
+        },
+        enabled: !!user.userId,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    })
+
+    const { data: ThongBaoToAdmins } = useQuery({
+        queryKey: ['Get-Thongbaotoadmin', user.token],
+        queryFn: async ({ queryKey }) => {
+            const [, token] = queryKey;
+            const res = await GetThongBaoForUserService({ token });
             return res;
         },
         enabled: !!user.userId,
@@ -122,6 +135,36 @@ export const ControlUserComponent = () => {
         },
     })
 
+    const mutationDeleteThongBaoToAdmin = useMutation({
+        mutationFn: DeleteThongBaoForUserService,
+        onMutate: async (Data) => {
+            await queryClient.cancelQueries('Get-Thongbaotoadmin');
+            const previousValue = queryClient.getQueryData('Get-Thongbaotoadmin');
+            queryClient.setQueryData('Get-Thongbaotoadmin', (old) => {
+                return old;
+            });
+            return previousValue;
+        },
+        onSuccess: (data) => {
+
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('Get-Thongbaotoadmin');
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    })
+
     const handleClick = (event) => {
         setShow(!show);
         setTarget(event.target);
@@ -148,10 +191,16 @@ export const ControlUserComponent = () => {
     }, []);
 
     useEffect(() => {
-        if (data) {
-            setDataCommentOfUser(data.data);
+        if (comments) {
+            setDataCommentOfUser(comments.data);
         }
-    }, [data])
+    }, [comments])
+
+    useEffect(() => {
+        if (ThongBaoToAdmins) {
+            setDataThongBaoToAdmins(ThongBaoToAdmins.data);
+        }
+    }, [ThongBaoToAdmins])
 
     //handle
     const handleNavigateTruyen = async (item) => {
@@ -161,6 +210,12 @@ export const ControlUserComponent = () => {
             comment_id: item.id,
             IsRead: true
         });
+        setShowThongBao(false);
+    }
+
+    const handleNavigateAuthorTruyen = async (item) => {
+        navigate(`/author/dang-truyen`);
+
         setShowThongBao(false);
     }
 
@@ -174,6 +229,15 @@ export const ControlUserComponent = () => {
         });
     }
 
+    const handleDeleteThongBaoToAdmin = async (e, item) => {
+        e.stopPropagation();
+        await mutationDeleteThongBaoToAdmin.mutateAsync({
+            token: user.token,
+            id: item.id
+        });
+    }
+
+
     return (
         <>
             <div className='ControlUserComponent'>
@@ -183,7 +247,7 @@ export const ControlUserComponent = () => {
                     <Badge
                         style={{ position: 'absolute' }}
                         pill
-                        bg="danger">{dataCommentOfUser.filter(item => item.IsRead === false).length}</Badge>
+                        bg="danger">{dataCommentOfUser.filter(item => item.IsRead === false).length + dataThongBaoToAdmins.length}</Badge>
                     <span className="visually-hidden">unread messages</span>
                 </Button>
 
@@ -243,6 +307,39 @@ export const ControlUserComponent = () => {
                         </div>
 
                         <ul className='ModalThongBao__content__list'>
+                            {dataThongBaoToAdmins.length > 0 && dataThongBaoToAdmins.map((item, index) => (
+                                <li onClick={() => handleNavigateAuthorTruyen(item)} style={{ backgroundColor: item.IsRead ? '' : '#e9e9e9' }} key={item.id} className='ModalThongBao__content__list__item'>
+                                    <div className='ModalThongBao__content__list__item__holdLeftMid'>
+
+                                        <div className='ModalThongBao__content__list__item__holdLeftMid__left'>
+                                            <Image
+                                                roundedCircle
+                                                width={50}
+                                                height={50}
+                                                crossOrigin='anonymous'
+                                                src={
+                                                    User
+                                                }
+                                                alt='user'
+                                            />
+                                        </div>
+
+                                        <div className='ModalThongBao__content__list__item__holdLeftMid__mid'>
+                                            <span className='ModalThongBao__content__list__item__holdLeftMid__mid__text'>từ : ADMIN - {formatDistanceStrict(new Date(item.createdAt), new Date(), { addSuffix: true, locale: vi })} </span>
+
+                                            <span style={{ color: '#9c27b0' }} className='ModalThongBao__content__list__item__holdLeftMid__mid__text'>
+                                                {item.content}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className='ModalThongBao__content__list__item__right'>
+                                        <span onClick={(e) => handleDeleteThongBaoToAdmin(e, item)}>
+                                            <TiDelete size={20} color='red' />
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
                             {dataCommentOfUser.length > 0 && dataCommentOfUser.filter(item => item.IsShow === true).map((item, index) => (
                                 <li onClick={() => handleNavigateTruyen(item)} style={{ backgroundColor: item.IsRead ? '' : '#e9e9e9' }} key={item.id} className='ModalThongBao__content__list__item'>
                                     <div className='ModalThongBao__content__list__item__holdLeftMid'>

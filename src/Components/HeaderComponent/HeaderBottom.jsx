@@ -14,8 +14,12 @@ import { FormLoginSigninComponent } from '../FormLoginSigninComponent/FormLoginS
 import { ControlUserComponent } from '../ControlUserComponent/ControlUserComponent';
 import { useQuery } from '@tanstack/react-query';
 import { GetAllTheLoaiService } from '../../services/TruyenService';
+import { useSelector } from 'react-redux';
 
 export const HeaderBottom = ({ isDarkMode }) => {
+
+    const user = useSelector(state => state?.user);
+
 
     const [isOpen, setIsOpen] = useState(false);
     const [text, setText] = useState('');
@@ -125,8 +129,12 @@ export const HeaderBottom = ({ isDarkMode }) => {
                                         <a className='HeaderComponent__Bottom__nav__container__List__Item__Top' href='https://www.facebook.com/profile.php?id=61566114167887&ref=embed_page' >Fanpage</a>
                                     </li>
                                     <li className='Button__User'>
-                                        <ControlUserComponent />
-                                        {/* <ButtonLoginSignin handleShowForm={handleShowForm} /> */}
+                                        {user.isLogin ? (
+                                            <ControlUserComponent />
+
+                                        ) : (
+                                            <ButtonLoginSignin handleShowForm={handleShowForm} />
+                                        )}
                                     </li>
                                 </ul>
                             </Nav>
@@ -137,7 +145,7 @@ export const HeaderBottom = ({ isDarkMode }) => {
 
             {/* Form đăng nhập */}
             <Modal centered show={showForm} onHide={handleCloseForm}>
-                <FormLoginSigninComponent setisFormNow={setisFormNow} isFormNow={isFormNow} />
+                <FormLoginSigninComponent setisFormNow={setisFormNow} isFormNow={isFormNow} setShowForm={setShowForm} />
             </Modal>
         </>
     )

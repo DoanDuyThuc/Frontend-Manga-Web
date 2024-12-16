@@ -9,13 +9,67 @@ import { TbBrowserX } from "react-icons/tb";
 import { IoReloadCircle } from 'react-icons/io5'
 import { FaBook, FaUserCog } from "react-icons/fa";
 
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useMutation } from '@tanstack/react-query'
+import { LogoutService } from '../../services/UserService'
+import { clearUser } from '../../redux/user/userSlice'
+import { toast } from 'react-toastify'
 
 export const DefaultAdmin = ({ children }) => {
+
+    const dispatch = useDispatch();
 
     const user = useSelector(state => state.user);
 
     const location = useLocation();
+
+    //mutation
+    const mutationLogout = useMutation({
+        mutationFn: LogoutService,
+        onSuccess: (data) => {
+            if (!data.error) {
+                localStorage.removeItem('token');
+                dispatch(clearUser());
+                toast.success(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.error(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${'có lỗi: ' + error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    });
+
+    const handleLogout = async () => {
+        await mutationLogout.mutateAsync();
+    }
 
     return (
         <div className='DefaultAdmin'>
@@ -60,18 +114,9 @@ export const DefaultAdmin = ({ children }) => {
                                         <span>Thể loại truyện</span>
                                     </NavLink>
                                 </li>
-                                <li style={{
-                                    background: location.pathname === '/author/truyen-bi-tu-choi' ?
-                                        '#4a4a4a' : 'none'
-                                }} className='DefaultAdmin__left__list__item'>
-                                    <NavLink to={'/author/truyen-bi-tu-choi'}>
-                                        <TbBrowserX />
-                                        <span>Truyện không được duyệt</span>
-                                    </NavLink>
-                                </li>
                             </ul>
                             <li style={{ position: 'absolute', bottom: '0' }} className='DefaultAdmin__left__logout'>
-                                <NavLink to={'/logout'}>
+                                <NavLink onClick={handleLogout} to={'/'}>
                                     <RiLogoutBoxLine />
                                     <span>Đăng Xuất</span>
                                 </NavLink>

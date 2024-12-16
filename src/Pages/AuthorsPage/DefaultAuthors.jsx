@@ -8,10 +8,66 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { TbBrowserCheck, TbBrowserX } from "react-icons/tb";
 import { IoReloadCircle } from 'react-icons/io5'
 import { IoIosCloudUpload } from 'react-icons/io'
+import { useMutation } from '@tanstack/react-query'
+import { LogoutService } from '../../services/UserService'
+import { useDispatch } from 'react-redux'
+import { clearUser } from '../../redux/user/userSlice'
+import { toast } from 'react-toastify'
 
 export const DefaultAuthors = ({ children }) => {
 
+    const dispatch = useDispatch();
+
     const location = useLocation();
+
+    //mutation
+    const mutationLogout = useMutation({
+        mutationFn: LogoutService,
+        onSuccess: (data) => {
+            if (!data.error) {
+                localStorage.removeItem('token');
+                dispatch(clearUser());
+                toast.success(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.error(`🐉 ${data?.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${'có lỗi: ' + error}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        },
+    });
+
+    const handleLogout = async () => {
+        await mutationLogout.mutateAsync();
+    }
+
 
     return (
         <div className='DefaultAuthors'>
@@ -38,36 +94,9 @@ export const DefaultAuthors = ({ children }) => {
                                         <span>Quản lý truyện của tác giả</span>
                                     </NavLink>
                                 </li>
-                                <li className='DefaultAuthors__left__list__item'>
-                                    <NavLink style={{
-                                        background: location.pathname === '/author/truyen-da-xuat-ban' ?
-                                            '#4a4a4a' : 'none'
-                                    }} to={'/author/truyen-da-xuat-ban'}>
-                                        <TbBrowserCheck />
-                                        <span>Phản hồi người đọc về truyện</span>
-                                    </NavLink>
-                                </li>
-                                <li style={{
-                                    background: location.pathname === '/author/truyen-doi-duyet' ?
-                                        '#4a4a4a' : 'none'
-                                }} className='DefaultAuthors__left__list__item'>
-                                    <NavLink to={'/author/truyen-doi-duyet'}>
-                                        <IoReloadCircle />
-                                        <span>Truyện đang đợi duyệt</span>
-                                    </NavLink>
-                                </li>
-                                <li style={{
-                                    background: location.pathname === '/author/truyen-bi-tu-choi' ?
-                                        '#4a4a4a' : 'none'
-                                }} className='DefaultAuthors__left__list__item'>
-                                    <NavLink to={'/author/truyen-bi-tu-choi'}>
-                                        <TbBrowserX />
-                                        <span>Truyện không được duyệt</span>
-                                    </NavLink>
-                                </li>
                             </ul>
                             <li style={{ position: 'absolute', bottom: '0' }} className='DefaultAuthors__left__logout'>
-                                <NavLink to={'/logout'}>
+                                <NavLink onClick={handleLogout} to={'/'}>
                                     <RiLogoutBoxLine />
                                     <span>Đăng Xuất</span>
                                 </NavLink>

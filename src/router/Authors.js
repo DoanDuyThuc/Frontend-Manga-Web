@@ -1,8 +1,6 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { DefaultAuthors } from '../Pages/AuthorsPage/DefaultAuthors'
-import { MangaPublished } from '../Pages/AuthorsPage/MangaPublished'
-import { MangaIsPending } from '../Pages/AuthorsPage/MangaIsPending'
 import { ManagerTruyen } from '../Pages/AuthorsPage/ManagerTruyen'
 import { UpdateTruyen } from '../Pages/AuthorsPage/UpdateTruyen'
 import { AddChuongManga } from '../Pages/AuthorsPage/AddChuongManga'
@@ -15,16 +13,6 @@ const AuthorsRouter =
         {
             path: '/dang-truyen',
             page: ManagerTruyen,
-            isLayoutAuthor: true,
-        },
-        {
-            path: '/truyen-da-xuat-ban',
-            page: MangaPublished,
-            isLayoutAuthor: true,
-        },
-        {
-            path: '/truyen-doi-duyet',
-            page: MangaIsPending,
             isLayoutAuthor: true,
         },
         {

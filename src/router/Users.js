@@ -6,6 +6,7 @@ import { HistoryListPage } from '../Pages/ListInforMemberPage/HistoryListPage'
 import { DefaultSettingInfor } from '../Pages/ListInforMemberPage/SettingPage/DefaultSettingInfor'
 import { SettingManagerUser } from '../Pages/ListInforMemberPage/SettingPage/SettingManagerUser'
 import { SettingChangePassword } from '../Pages/ListInforMemberPage/SettingPage/SettingChangePassword'
+import { BecomeAnAuthor } from '../Pages/ListInforMemberPage/SettingPage/BecomeAnAuthor'
 
 
 const UsersRouter =
@@ -31,6 +32,12 @@ const UsersRouter =
         {
             path: '/doi-mat-khau',
             page: SettingChangePassword,
+            isLayout2: true,
+            isHeaderFooter: true,
+        },
+        {
+            path: '/dang-ky-tac-gia',
+            page: BecomeAnAuthor,
             isLayout2: true,
             isHeaderFooter: true,
         },

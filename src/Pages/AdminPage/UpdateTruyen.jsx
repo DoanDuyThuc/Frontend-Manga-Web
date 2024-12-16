@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,11 +11,14 @@ import { Button, Col, Image } from 'react-bootstrap';
 
 import thumbnailBase from '../../public/images/anh-thumbnail.jpg'
 import { toast } from 'react-toastify';
+import { AddThongBaoForUserService } from '../../services/UserService';
 
 export const UpdateTruyen = () => {
 
     const user = useSelector(state => state?.user);
     const navigate = useNavigate();
+
+    const queryClient = useQueryClient();
 
     const { truyen_ma } = useParams();
 
@@ -79,11 +82,56 @@ export const UpdateTruyen = () => {
         }
     })
 
+    const mutationAddThongBaoActive = useMutation({
+        mutationFn: AddThongBaoForUserService,
+        onMutate: async (Data) => {
+            await queryClient.cancelQueries('GetTruyen');
+            const previousValue = queryClient.getQueryData('GetTruyen');
+            queryClient.setQueryData('GetTruyen', (old) => {
+                return old;
+            });
+            return previousValue;
+        },
+        onSuccess: (data) => {
+            toast.success(`🐉 ${data?.message}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
+            navigate('/admin/quan-ly-truyen');
+
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries('GetTruyen');
+        },
+        onError: (error) => {
+            toast.error(`🐉 ${data?.message}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+    })
+
     useEffect(() => {
         if (data) {
             setDataTruyen(data.data);
         }
     }, [data]);
+
+    console.log(dataTruyen);
+
 
     // handle
     const handleFileChange = (e, setFieldValue) => {
@@ -125,6 +173,17 @@ export const UpdateTruyen = () => {
                             data: formData,
                             truyen_ma: truyen_ma
                         });
+
+                        if (values.truyen_duyet) {
+                            if (values.truyen_duyet === 'true') {
+                                await mutationAddThongBaoActive.mutateAsync({
+                                    token: user.token,
+                                    idUser: dataTruyen?.UserId,
+                                    content: `Truyện của bạn ${dataTruyen.truyen_ten} đã được duyệt`,
+                                })
+                            }
+
+                        }
 
                     }
                 }
